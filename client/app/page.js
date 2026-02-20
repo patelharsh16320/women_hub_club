@@ -1,31 +1,43 @@
 import { getProducts } from "@/services/productService";
 import ProductCard from "@/components/ProductCard";
+import Link from "next/link";
+import "./style.css";
 
 export default async function Home() {
   const products = await getProducts();
 
   return (
-    <div className="container py-5">
-
+    <div className="home-page">
+      
       {/* Hero Section */}
-      <div className="text-center mb-5">
-        <h1 className="display-5 fw-bold">
-          Welcome to Women Hub
-        </h1>
-        <p className="text-muted">
-          Discover premium products designed for women
-        </p>
-      </div>
+      <section className="hero-section">
+        <div className="hero-content">
+          <h1>Welcome to Women Hub</h1>
+
+          <p className="hero-subtitle">
+            Discover premium products designed for modern women
+          </p>
+
+          <p className="hero-desc">
+            Explore our curated collection of high-quality products.
+          </p>
+
+          <Link className="shop-btn" href="/products">
+            Shop Now
+          </Link>
+        </div>
+      </section>
 
       {/* Products */}
-      <div className="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
-        {products?.map((product) => (
-          <ProductCard
-            key={product._id}
-            product={product}
-          />
-        ))}
-      </div>
+      <section className="products-section container">
+        <h2 className="section-title">Featured Products</h2>
+
+        <div className="product-grid">
+          {products?.map((product) => (
+            <ProductCard key={product._id} product={product} />
+          ))}
+        </div>
+      </section>
 
     </div>
   );

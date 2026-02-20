@@ -7,16 +7,19 @@ const cart = require("../controllers/cartController");
 const order = require("../controllers/orderController");
 const category = require("../controllers/categoryController");
 
+/* USER ROUTES */
+router.post("/users", user.createUser);       // Create user
+router.get("/users", user.getUsers);          // Get all users
+router.get("/users/:id", user.getUserById);  // Get single user
+router.put("/users/:id", user.updateUser);   // Update user
+router.delete("/users/:id", user.deleteUser); // Delete user
+
 /* PRODUCT ROUTES */
 router.post("/products", product.createProduct);
 router.get("/products", product.getProducts);
 router.get("/products/:id", product.getProductById);
 router.post("/products/:id", product.updateProduct);
 router.delete("/products/:id", product.deleteProduct);
-
-/* USER ROUTES */
-router.post("/users/register", user.registerUser);
-router.get("/users", user.getUsers);
 
 /* CART */
 router.get("/cart", cart.getCart);

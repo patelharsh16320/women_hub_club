@@ -1,0 +1,138 @@
+/* ===============================
+   GLOBAL
+=================================*/
+
+.home-page {
+  background: #fafafa;
+  min-height: 100vh;
+  font-family: "Poppins", sans-serif;
+}
+
+/* ===============================
+   HERO SECTION
+=================================*/
+
+.hero-section {
+  background: linear-gradient(
+      rgba(255,255,255,0.9),
+      rgba(255,255,255,0.9)
+    ),
+    url("/hero-bg.jpg");
+  background-size: cover;
+  background-position: center;
+  padding: 80px 20px;
+  text-align: center;
+  border-radius: 12px;
+  margin: 30px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.05);
+}
+
+.hero-content h1 {
+  font-size: 3rem;
+  font-weight: 700;
+  color: #222;
+}
+
+.hero-subtitle {
+  font-size: 1.2rem;
+  color: #777;
+  margin-top: 15px;
+}
+
+.hero-desc {
+  margin-top: 10px;
+  color: #555;
+}
+
+/* Button */
+
+.shop-btn {
+  display: inline-block;
+  margin-top: 25px;
+  padding: 14px 32px;
+  background: #111;
+  color: white;
+  text-decoration: none;
+  border-radius: 30px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.shop-btn:hover {
+  background: #ff4d6d;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(0,0,0,0.15);
+}
+
+/* ===============================
+   PRODUCTS SECTION
+=================================*/
+
+.products-section {
+  padding: 60px 0;
+}
+
+.section-title {
+  text-align: center;
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 40px;
+  color: #222;
+}
+
+/* Grid Layout */
+
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 25px;
+}
+
+/* ===============================
+   PRODUCT CARD ENHANCEMENT
+   (works with your ProductCard)
+=================================*/
+
+.product-card {
+  background: white;
+  border-radius: 14px;
+  overflow: hidden;
+  transition: 0.3s ease;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+
+.product-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 25px rgba(0,0,0,0.1);
+}
+
+/* ===============================
+   RESPONSIVE
+=================================*/
+
+@media (max-width: 992px) {
+  .hero-content h1 {
+    font-size: 2.3rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-section {
+    padding: 60px 15px;
+    margin: 15px;
+  }
+
+  .hero-content h1 {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-content h1 {
+    font-size: 1.6rem;
+  }
+
+  .shop-btn {
+    padding: 12px 24px;
+  }
+}
