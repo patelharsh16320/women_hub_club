@@ -3,6 +3,7 @@ const router = express.Router();
 
 const product = require("../controllers/productController");
 const user = require("../controllers/userController");
+const auth = require("../controllers/authController");
 const cart = require("../controllers/cartController");
 const order = require("../controllers/orderController");
 const category = require("../controllers/categoryController");
@@ -24,6 +25,9 @@ router.delete("/products/:id", product.deleteProduct);
 /* CART */
 router.get("/cart", cart.getCart);
 router.post("/cart", cart.addToCart);
+
+/* AUTH */
+router.post("/login", auth.login);
 
 /* ORDERS */
 router.post("/orders", order.createOrder);

@@ -136,3 +136,115 @@
     padding: 12px 24px;
   }
 }
+
+/* ===============================
+   HEADER BASE
+=================================*/
+
+.main-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.navbar {
+  padding: 14px 0;
+  transition: all 0.3s ease;
+}
+
+/* ===============================
+   BRAND LOGO
+=================================*/
+
+.brand-logo {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #222 !important;
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+}
+
+.brand-tagline {
+  font-size: 12px;
+  font-weight: 400;
+  color: #777;
+}
+
+/* ===============================
+   NAV LINKS
+=================================*/
+
+.nav-link {
+  font-weight: 500;
+  color: #333 !important;
+  margin: 0 10px;
+  position: relative;
+  transition: 0.3s;
+}
+
+.nav-link:hover {
+  color: #ff4d6d !important;
+}
+
+/* underline animation */
+.nav-link::after {
+  content: "";
+  position: absolute;
+  width: 0%;
+  height: 2px;
+  left: 0;
+  bottom: 0;
+  background: #ff4d6d;
+  transition: 0.3s;
+}
+
+.nav-link:hover::after {
+  width: 100%;
+}
+
+/* ===============================
+   CART BUTTON
+=================================*/
+
+.cart-link {
+  font-weight: 600;
+}
+
+/* ===============================
+   CONTACT BUTTON
+=================================*/
+
+.contact-btn {
+  background: #111;
+  color: white !important;
+  padding: 8px 18px;
+  border-radius: 25px;
+  margin-left: 10px;
+  transition: 0.3s ease;
+}
+
+.contact-btn:hover {
+  background: #ff4d6d;
+  transform: translateY(-1px);
+}
+
+/* ===============================
+   MOBILE
+=================================*/
+
+@media (max-width: 991px) {
+
+  .brand-tagline {
+    display: none;
+  }
+
+  .nav-link {
+    margin: 8px 0;
+  }
+
+  .contact-btn {
+    margin-top: 10px;
+    display: inline-block;
+  }
+}
