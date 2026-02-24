@@ -2,14 +2,26 @@
 
 import Link from "next/link";
 
+function resolveImageUrl(imagePath) {
+  if (!imagePath) return "";
+  if (imagePath.startsWith("http://") || imagePath.startsWith("https://")) return imagePath;
+  const apiBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+  const apiOrigin = apiBase.replace(/\/api\/?$/i, "");
+  if (imagePath.startsWith("/uploads")) return `${apiOrigin}${imagePath}`;
+  if (imagePath.startsWith("uploads")) return `${apiOrigin}/${imagePath}`;
+  return imagePath;
+}
+
 export default function ProductCard({ product }) {
+  const imgSrc = resolveImageUrl(product?.image || "");
+
   return (
     <div className="col">
       <div className="card h-100 shadow-sm border-0">
 
         {/* Product Image */}
         <img
-          src={product.image}
+          src={imgSrc}
           className="card-img-top"
           alt={product.name}
           style={{ height: "250px", objectFit: "cover" }}

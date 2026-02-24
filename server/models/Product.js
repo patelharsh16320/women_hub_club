@@ -8,6 +8,13 @@ const productSchema = new mongoose.Schema(
     image: String,
     category: String,
     countInStock: Number,
+
+    // NEW (recommended)
+    owner: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+
     rating: { type: Number, default: 0 },
     numReviews: { type: Number, default: 0 },
   },

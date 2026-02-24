@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const upload = require("../middleware/upload");
 
 const product = require("../controllers/productController");
 const user = require("../controllers/userController");
@@ -9,14 +10,14 @@ const order = require("../controllers/orderController");
 const category = require("../controllers/categoryController");
 
 /* USER ROUTES */
-router.post("/users", user.createUser);       // Create user
-router.get("/users", user.getUsers);          // Get all users
-router.get("/users/:id", user.getUserById);  // Get single user
-router.put("/users/:id", user.updateUser);   // Update user
-router.delete("/users/:id", user.deleteUser); // Delete user
+router.post("/users", user.createUser);
+router.get("/users", user.getUsers);
+router.get("/users/:id", user.getUserById);
+router.put("/users/:id", user.updateUser);
+router.delete("/users/:id", user.deleteUser);
 
 /* PRODUCT ROUTES */
-router.post("/products", product.createProduct);
+router.post("/products", upload.single("image"), product.createProduct);
 router.get("/products", product.getProducts);
 router.get("/products/:id", product.getProductById);
 router.post("/products/:id", product.updateProduct);
