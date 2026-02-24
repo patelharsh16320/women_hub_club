@@ -1,0 +1,5 @@
+{
+  "API_URL": "http://localhost:5000/api",
+  "API_ORIGIN": "http://localhost:5000",
+  "CLIENT_ORIGIN": "http://localhost:3000"
+}

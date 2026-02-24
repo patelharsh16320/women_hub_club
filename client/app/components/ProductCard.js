@@ -1,12 +1,11 @@
 "use client";
 
 import Link from "next/link";
-
 function resolveImageUrl(imagePath) {
   if (!imagePath) return "";
   if (imagePath.startsWith("http://") || imagePath.startsWith("https://")) return imagePath;
   const apiBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
-  const apiOrigin = apiBase.replace(/\/api\/?$/i, "");
+  const apiOrigin = (apiBase || "").replace(/\/api\/?$/i, "");
   if (imagePath.startsWith("/uploads")) return `${apiOrigin}${imagePath}`;
   if (imagePath.startsWith("uploads")) return `${apiOrigin}/${imagePath}`;
   return imagePath;

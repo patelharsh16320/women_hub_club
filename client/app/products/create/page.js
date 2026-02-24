@@ -41,7 +41,7 @@ const handleSubmit = async (e) => {
       data.append("image", image);
     }
 
-    // POST to backend API. Ensure NEXT_PUBLIC_API_URL is set (e.g. http://localhost:5000/api)
+    // Use NEXT_PUBLIC_API_URL (from client/.env.local) or fallback to localhost
     const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
 
     const res = await fetch(`${API_URL}/products`, {
