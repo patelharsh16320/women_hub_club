@@ -11,8 +11,9 @@ export const fetchAPI = async (endpoint, options = {}) => {
 
   if (!res.ok) {
     const text = await res.text();
-    console.error("API ERROR:", text);
-    throw new Error("API request failed");
+    const errMsg = text || `HTTP ${res.status} ${res.statusText}`;
+    console.error("API ERROR:", res.status, res.statusText, text);
+    throw new Error(errMsg);
   }
 
   return res.json();

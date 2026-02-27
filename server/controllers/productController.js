@@ -1,16 +1,9 @@
 const Product = require("../models/Product");
 
 // CREATE
-// exports.createProduct = async (req, res) => {
-//   const product = await Product.create(req.body);
-//   res.json(product);
-// };
 exports.createProduct = async (req, res) => {
   try {
-    // get id from URL (ex: /products/:id)
     const ownerId = req.params.id;
-
-    // basic validation
     const {
       name,
       description,
@@ -61,17 +54,33 @@ exports.getProducts = async (req, res) => {
 
 // READ ONE
 exports.getProductById = async (req, res) => {
-  const product = await Product.findById(req.params.id);
+  const id = req.params.id;
+  // validate id to avoid Mongoose CastError
+  const mongoose = require("mongoose");
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({ message: "Invalid product id" });
+  }
+
+  const product = await Product.findById(id);
+  if (!product) return res.status(404).json({ message: "Product not found" });
   res.json(product);
 };
 
 // UPDATE
 exports.updateProduct = async (req, res) => {
+  const id = req.params.id;
+  const mongoose = require("mongoose");
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({ message: "Invalid product id" });
+  }
+
   const product = await Product.findByIdAndUpdate(
-    req.params.id,
+    id,
     req.body,
     { new: true }
   );
+
+  if (!product) return res.status(404).json({ message: "Product not found" });
   res.json(product);
 };
 

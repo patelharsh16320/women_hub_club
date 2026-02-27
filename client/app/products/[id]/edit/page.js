@@ -1,23 +1,38 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import { fetchAPI } from "../../../../services/api";
 
-export default function EditProductPage({ params }) {
-  const id = params.id;
+export default function EditProductPage() {
+  const p = useParams();
+  const id = p?.id;
   const router = useRouter();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const load = async () => {
+      if (!id) {
+        setError("Missing product id in route");
+        return;
+      }
       try {
         setLoading(true);
+        // log the full URL we're requesting for easier debugging
+        console.log("Fetching product:", process.env.NEXT_PUBLIC_API_URL, `/products/${id}`);
+
         const p = await fetchAPI(`/products/${id}`);
+        if (!p) {
+          throw new Error("Product not found");
+        }
         setProduct(p);
       } catch (err) {
-        alert("Failed to load product");
+        console.error("Load product error:", err);
+        setError(err?.message || String(err));
+        // keep the generic alert for immediate user feedback too
+        alert("Failed to load product: " + (err?.message || "Unknown error"));
       } finally { setLoading(false); }
     };
     load();
@@ -40,10 +55,18 @@ export default function EditProductPage({ params }) {
       });
       router.push("/products/manage");
     } catch (err) {
-      alert("Update failed");
+      console.error("Update error:", err);
+      alert("Update failed: " + (err?.message || "Unknown error"));
     } finally { setLoading(false); }
   };
 
+  if (loading) return <p>Loading...</p>;
+  if (error) return (
+    <div className="container py-5">
+      <h2 className="text-center text-danger">Error loading product</h2>
+      <p className="text-center">{error}</p>
+    </div>
+  );
   if (!product) return <p>Loading...</p>;
 
   return (

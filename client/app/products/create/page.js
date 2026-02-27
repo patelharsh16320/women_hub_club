@@ -49,11 +49,16 @@ const handleSubmit = async (e) => {
       body: data,
     });
 
-    if (!res.ok) throw new Error("Failed");
+    if (!res.ok) {
+      const txt = await res.text();
+      throw new Error(txt || "Failed");
+    }
 
-    alert("✅ Product Created");
+    // read created product
+    const created = await res.json();
 
-    router.push("/products");
+    // redirect to products listing (use replace to avoid back navigation to form)
+    router.replace("/products");
 
   } catch (err) {
     console.error(err);

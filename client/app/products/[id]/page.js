@@ -1,5 +1,15 @@
 import { getProductById } from "@/services/productService";
 
+function resolveImageUrl(imagePath) {
+  if (!imagePath) return "";
+  if (imagePath.startsWith("http://") || imagePath.startsWith("https://")) return imagePath;
+  const apiBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+  const apiOrigin = (apiBase || "").replace(/\/api\/?$/i, "");
+  if (imagePath.startsWith("/uploads")) return `${apiOrigin}${imagePath}`;
+  if (imagePath.startsWith("uploads")) return `${apiOrigin}/${imagePath}`;
+  return imagePath;
+}
+
 export default async function ProductDetailPage({ params }) {
 
   // ✅ Next.js 15 FIX
@@ -9,34 +19,53 @@ export default async function ProductDetailPage({ params }) {
 
   const product = await getProductById(id);
 
+  const imgSrc = resolveImageUrl(product?.image || "");
+
   if (!product) {
-    return <h1>Product not found</h1>;
+    return (
+      <div className="container py-5">
+        <h2 className="text-center">Product not found</h2>
+      </div>
+    );
   }
 
   return (
-    <div className="container mx-auto px-6 py-10">
-      <div className="grid grid-cols-2 gap-10">
+    <div className="container py-5">
+      <div className="card shadow-sm border-0">
+        <div className="card-body">
+          <div className="row align-items-center">
 
-        <img
-          src={product.image}
-          alt={product.name}
-          className="w-full rounded-lg"
-        />
+            {/* Product Image */}
+            <div className="col-md-6 mb-4 mb-md-0 text-center">
+              <img
+                src={imgSrc}
+                alt={product.name}
+                className="img-fluid rounded"
+                style={{ maxHeight: "450px", objectFit: "cover" }}
+              />
+            </div>
 
-        <div>
-          <h1 className="text-3xl font-bold mb-4">
-            {product.name}
-          </h1>
+            {/* Product Details */}
+            <div className="col-md-6">
+              <h1 className="fw-bold mb-3">
+                {product.name}
+              </h1>
 
-          <p className="text-gray-600 mb-4">
-            {product.description}
-          </p>
+              <p className="text-muted mb-4">
+                {product.description}
+              </p>
 
-          <p className="text-2xl font-semibold">
-            ₹ {product.price}
-          </p>
+              <h3 className="fw-semibold text-dark mb-4">
+                ₹ {product.price}
+              </h3>
+
+              <button className="btn btn-dark btn-lg">
+                Add to Cart
+              </button>
+            </div>
+
+          </div>
         </div>
-
       </div>
     </div>
   );

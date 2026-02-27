@@ -5,19 +5,21 @@ export default async function ProductsPage() {
   const products = await getProducts();
 
   return (
-    <>
-      <h1 className="text-2xl font-bold mb-6">
+    <div className="container py-5">
+      <h1 className="fw-bold mb-4">
         All Products
       </h1>
 
-      <div className="grid grid-cols-4 gap-6">
+      <div className="row g-4">
         {products?.map((product) => (
-          <ProductCard
+          <div
             key={product._id}
-            product={product}
-          />
+            className="col-12 col-sm-6 col-md-4 col-lg-3"
+          >
+            <ProductCard product={product} />
+          </div>
         ))}
       </div>
-    </>
+    </div>
   );
 }

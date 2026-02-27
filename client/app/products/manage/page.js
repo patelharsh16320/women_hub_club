@@ -34,39 +34,61 @@ export default function ManageProductsPage() {
   };
 
   return (
-    <div className="max-w-6xl mx-auto py-8">
-      <div className="flex items-center justify-between mb-4">
-        <h1 className="text-2xl font-bold">Manage Products</h1>
-        <Link href="/products/create" className="btn btn-dark">Create Product</Link>
-      </div>
+ <div className="container py-5">
+  <div className="d-flex justify-content-between align-items-center mb-4">
+    <h2 className="fw-bold">Manage Products</h2>
 
-      {loading && <p>Loading...</p>}
+    <Link href="/products/create" className="btn btn-dark">
+      Create Product
+    </Link>
+  </div>
 
-      <div className="overflow-x-auto bg-white rounded shadow">
-        <table className="min-w-full">
-          <thead className="bg-gray-100">
-            <tr>
-              <th className="p-2 text-left">Name</th>
-              <th className="p-2 text-left">Price</th>
-              <th className="p-2 text-left">Category</th>
-              <th className="p-2">Actions</th>
+  {loading && <p>Loading...</p>}
+
+  <div className="card shadow-sm">
+    <div className="card-body">
+      <table className="table table-hover align-middle">
+        <thead className="table-light">
+          <tr>
+            <th>Name</th>
+            <th>Price</th>
+            <th>Category</th>
+            <th className="text-center">Actions</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {products.map((p) => (
+            <tr key={p._id}>
+              <td className="fw-medium">{p.name}</td>
+              <td>₹ {p.price}</td>
+              <td>
+                <span className="badge bg-secondary">
+                  {p.category}
+                </span>
+              </td>
+
+              <td className="text-center">
+                <Link
+                  href={`/products/${p._id}/edit`}
+                  className="btn btn-sm btn-outline-dark me-2"
+                >
+                  Edit
+                </Link>
+
+                <button
+                  onClick={() => handleDelete(p._id)}
+                  className="btn btn-sm btn-danger"
+                >
+                  Delete
+                </button>
+              </td>
             </tr>
-          </thead>
-          <tbody>
-            {products.map((p) => (
-              <tr key={p._id} className="border-t">
-                <td className="p-2">{p.name}</td>
-                <td className="p-2">₹ {p.price}</td>
-                <td className="p-2">{p.category}</td>
-                <td className="p-2 text-center">
-                  <Link href={`/products/${p._id}/edit`} className="btn btn-sm btn-outline mr-2">Edit</Link>
-                  <button onClick={() => handleDelete(p._id)} className="btn btn-sm btn-danger">Delete</button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+          ))}
+        </tbody>
+      </table>
     </div>
+  </div>
+</div>
   );
 }
