@@ -8,6 +8,7 @@ const auth = require("../controllers/authController");
 const cart = require("../controllers/cartController");
 const order = require("../controllers/orderController");
 const category = require("../controllers/categoryController");
+const invoice = require("../controllers/invoiceController");
 
 /* USER ROUTES */
 router.post("/users", user.createUser);
@@ -33,6 +34,11 @@ router.post("/login", auth.login);
 /* ORDERS */
 router.post("/orders", order.createOrder);
 router.get("/orders", order.getOrders);
+
+/* INVOICES */
+router.post("/invoices", invoice.createInvoice);
+router.get("/invoices", invoice.getInvoices);
+router.get("/invoices/:id", invoice.getInvoiceById);
 
 /* CATEGORY ROUTES */
 router.post("/categories", category.createCategory);

@@ -1,9 +1,11 @@
-'use client';
+"use client";
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { createInvoice } from '@/services/invoiceService';
 
 export default function Checkout() {
 	const [name, setName] = useState('');
+	const [email, setEmail] = useState('');
 	const [address, setAddress] = useState('');
 	const [card, setCard] = useState('');
 	const [sent, setSent] = useState(false);
@@ -23,11 +25,40 @@ export default function Checkout() {
 		.reduce((s, item) => s + (item.price || 0) * (item.qty || 1), 0)
 		.toFixed(2);
 
-	const handleSubmit = (e) => {
+	const handleSubmit = async (e) => {
 		e.preventDefault();
-		localStorage.removeItem('cart');
-		setSent(true);
-		setTimeout(() => router.push('/'), 1500);
+
+		if (!cart.length) return alert('Cart is empty');
+
+		const items = cart.map(i => ({ product: i._id, name: i.name, price: Number(i.price) || 0, qty: i.qty || 1 }));
+		const subtotal = items.reduce((s, it) => s + (it.price || 0) * (it.qty || 1), 0);
+		const shipping = 0;
+		const total = subtotal + shipping;
+
+		try {
+			setSent(true);
+			const payload = {
+				customerName: name,
+				customerEmail: email,
+				items,
+				subtotal,
+				shipping,
+				total
+			};
+
+			const invoice = await createInvoice(payload);
+
+			// clear cart and notify
+			localStorage.removeItem('cart');
+			try { window.dispatchEvent(new CustomEvent('cartUpdated', { detail: { cart: [] } })); } catch (e) {}
+
+			// redirect to invoice detail
+			router.push(`/invoices/${invoice._id}`);
+		} catch (err) {
+			console.error('Checkout create invoice error:', err);
+			alert(err?.message || 'Failed to place order');
+			setSent(false);
+		}
 	};
 
 	return (
@@ -55,6 +86,15 @@ export default function Checkout() {
 								required
 							/>
 						</div>
+
+									<div className="form-group">
+										<label>Email</label>
+										<input
+											value={email}
+											onChange={e => setEmail(e.target.value)}
+											required
+										/>
+									</div>
 
 						<div className="form-group">
 							<label>Shipping Address</label>
