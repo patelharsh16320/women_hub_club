@@ -3,7 +3,8 @@ const Invoice = require('../models/Invoice');
 // Create invoice
 exports.createInvoice = async (req, res) => {
   try {
-    const { user, customerName, customerEmail, items, subtotal, shipping, total } = req.body;
+
+  const { user, customerName, customerEmail, items, subtotal, shipping, total, paymentMethod, paymentStatus, paymentId } = req.body;
 
     // basic validation
     if (!items || !Array.isArray(items) || items.length === 0) {
@@ -13,7 +14,18 @@ exports.createInvoice = async (req, res) => {
       return res.status(400).json({ message: 'Invalid subtotal or total' });
     }
 
-    const invoice = await Invoice.create({ user, customerName, customerEmail, items, subtotal, shipping: shipping || 0, total });
+    const invoice = await Invoice.create({
+      user,
+      customerName,
+      customerEmail,
+      items,
+      subtotal,
+      shipping: shipping || 0,
+      total,
+      paymentMethod: paymentMethod || 'stripe',
+      paymentStatus: paymentStatus || 'paid',
+      paymentId
+    });
     res.status(201).json(invoice);
   } catch (err) {
     console.error('Create Invoice Error:', err);

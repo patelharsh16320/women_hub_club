@@ -10,7 +10,6 @@ export default function CreateUserPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -19,9 +18,10 @@ export default function CreateUserPage() {
     setError("");
     setLoading(true);
     try {
+
       const user = await fetchAPI("/users", {
         method: "POST",
-        body: JSON.stringify({ name, email, password, role }),
+        body: JSON.stringify({ name, email, password, role: "user" }),
       });
 
       // go back to users list
@@ -53,10 +53,7 @@ export default function CreateUserPage() {
           <label className="block text-sm">Password</label>
           <input type="password" className="w-full border px-2 py-1" value={password} onChange={(e) => setPassword(e.target.value)} required />
         </div>
-        <div>
-          <label className="block text-sm">Role</label>
-          <input className="w-full border px-2 py-1" value={role} onChange={(e) => setRole(e.target.value)} placeholder="e.g. admin" />
-        </div>
+
 
         <div>
           <button type="submit" className="btn btn-dark w-full" disabled={loading}>

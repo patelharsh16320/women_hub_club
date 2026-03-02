@@ -30,6 +30,8 @@ export default async function InvoiceDetailPage(props) {
                         <h2>INVOICE</h2>
                         <p><strong>ID:</strong> #{invoice._id}</p>
                         <p><strong>Status:</strong> {invoice.status}</p>
+                        <p><strong>Payment Method:</strong> {invoice.paymentMethod || 'N/A'}</p>
+                        <p><strong>Payment Status:</strong> {invoice.paymentStatus || 'N/A'}</p>
                     </div>
                 </div>
 

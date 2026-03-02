@@ -197,6 +197,28 @@ input:-webkit-autofill,input:-webkit-autofill:focus,input:-webkit-autofill:hover
 .invoice-actions{text-align:right;margin-top:35px}
 .print-btn{background:#111;color:#fff;border:none;padding:12px 26px;border-radius:6px;cursor:pointer;font-weight:600;transition:.2s ease}
 .print-btn:hover{background:#000;transform:translateY(-1px)}
+.invoice-list-page{max-width:1000px;margin:auto;padding:40px 20px;font-family:Inter,Arial,sans-serif;color:#111}
+.invoice-list-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:25px}
+.invoice-list-header h1{margin:0;font-size:28px}
+.subtitle{color:#666;font-size:14px;margin-top:4px}
+.create-btn{background:#111;color:#fff;padding:12px 20px;border-radius:6px;text-decoration:none;font-weight:600;transition:.2s}
+.create-btn:hover{background:#000;transform:translateY(-1px)}
+.invoice-table-wrapper{background:#fff;border-radius:12px;border:1px solid #e5e7eb;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.05)}
+.invoice-list-table{width:100%;border-collapse:collapse}
+.invoice-list-table thead{background:#f5f6f8}
+.invoice-list-table th{text-align:left;padding:16px;font-size:14px;color:#444}
+.invoice-list-table td{padding:16px;border-top:1px solid #f0f0f0}
+.invoice-list-table tbody tr{transition:.2s}
+.invoice-list-table tbody tr:hover{background:#fafafa}
+.customer-cell{display:flex;flex-direction:column}
+.customer-name{font-weight:600}
+.customer-email{font-size:13px;color:#777}
+.invoice-id{font-weight:600;color:#333}
+.amount{font-weight:700;font-size:15px}
+.view-btn{border:1px solid #111;padding:8px 16px;border-radius:6px;text-decoration:none;color:#111;font-weight:600;transition:.2s}
+.view-btn:hover{background:#111;color:#fff}
+.empty{text-align:center;padding:40px;color:#777}
+.loading{margin-bottom:15px;color:#666}
 @media print{
 body{background:#fff}
 .invoice-page{padding:0;background:#fff}
