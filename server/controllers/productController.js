@@ -73,15 +73,27 @@ exports.updateProduct = async (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(400).json({ message: "Invalid product id" });
   }
+  try {
+    const updates = {};
+    const { name, description, price, category, countInStock } = req.body || {};
+    if (name !== undefined) updates.name = name;
+    if (description !== undefined) updates.description = description;
+    if (price !== undefined) updates.price = Number(price);
+    if (category !== undefined) updates.category = category;
+    if (countInStock !== undefined) updates.countInStock = Number(countInStock) || 0;
 
-  const product = await Product.findByIdAndUpdate(
-    id,
-    req.body,
-    { new: true }
-  );
+    // if a file was uploaded, set image
+    if (req.file) {
+      updates.image = `/uploads/${req.file.filename}`;
+    }
 
-  if (!product) return res.status(404).json({ message: "Product not found" });
-  res.json(product);
+    const product = await Product.findByIdAndUpdate(id, updates, { new: true });
+    if (!product) return res.status(404).json({ message: "Product not found" });
+    res.json(product);
+  } catch (error) {
+    console.error("Update Product Error:", error);
+    res.status(500).json({ message: "Server Error", error: error.message });
+  }
 };
 
 // DELETE

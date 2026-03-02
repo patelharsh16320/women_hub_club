@@ -1,4 +1,5 @@
 import { getProductById } from "@/services/productService";
+import ProductActionsClient from "@/components/ProductActionsClient";
 
 function resolveImageUrl(imagePath) {
   if (!imagePath) return "";
@@ -59,9 +60,8 @@ export default async function ProductDetailPage({ params }) {
                 ₹ {product.price}
               </h3>
 
-              <button className="btn btn-dark btn-lg">
-                Add to Cart
-              </button>
+              {/* client product actions (Add to Cart) */}
+              <ProductActionsClient product={{ _id: product._id, name: product.name, price: product.price, image: imgSrc }} />
             </div>
 
           </div>

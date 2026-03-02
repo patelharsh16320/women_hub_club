@@ -14,7 +14,7 @@ export default async function ProductsPage() {
         {products?.map((product) => (
           <div
             key={product._id}
-            className="col-12 col-sm-6 col-md-4 col-lg-3"
+            className="col-12 col-sm-6 col-md-4 col-lg-4"
           >
             <ProductCard product={product} />
           </div>

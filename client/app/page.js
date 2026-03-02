@@ -22,9 +22,10 @@ export default async function Home() {
             Explore our curated collection of high-quality products.
           </p>
 
-          <Link className="shop-btn" href="/products">
+          <Link className="checkout-btn" href="/products">
             Shop Now
           </Link>
+    
         </div>
       </section>
 

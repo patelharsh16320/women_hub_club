@@ -11,6 +11,8 @@ export default function EditProductPage() {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState("");
 
   useEffect(() => {
     const load = async () => {
@@ -28,6 +30,17 @@ export default function EditProductPage() {
           throw new Error("Product not found");
         }
         setProduct(p);
+        // set preview to resolved image url for current product
+        try {
+          const apiBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+          const apiOrigin = (apiBase || "").replace(/\/?api\/?$/i, "");
+          const img = p?.image || "";
+          if (img.startsWith("/uploads") || img.startsWith("uploads")) {
+            setPreviewUrl(img.startsWith("/") ? `${apiOrigin}${img}` : `${apiOrigin}/${img}`);
+          } else {
+            setPreviewUrl(img);
+          }
+        } catch (e) {}
       } catch (err) {
         console.error("Load product error:", err);
         setError(err?.message || String(err));
@@ -43,16 +56,31 @@ export default function EditProductPage() {
     try {
       setLoading(true);
       // server expects POST for update in routes
-      await fetchAPI(`/products/${id}`, {
-        method: "POST",
-        body: JSON.stringify({
-          name: product.name,
-          description: product.description,
-          price: product.price,
-          category: product.category,
-          countInStock: product.countInStock,
-        }),
-      });
+      if (selectedFile) {
+        const fd = new FormData();
+        fd.append("name", product.name);
+        fd.append("description", product.description || "");
+        fd.append("price", product.price);
+        fd.append("category", product.category || "");
+        fd.append("countInStock", product.countInStock || 0);
+        fd.append("image", selectedFile);
+
+        await fetchAPI(`/products/${id}`, {
+          method: "POST",
+          body: fd,
+        });
+      } else {
+        await fetchAPI(`/products/${id}`, {
+          method: "POST",
+          body: JSON.stringify({
+            name: product.name,
+            description: product.description,
+            price: product.price,
+            category: product.category,
+            countInStock: product.countInStock,
+          }),
+        });
+      }
       router.push("/products/manage");
     } catch (err) {
       console.error("Update error:", err);
@@ -70,12 +98,28 @@ export default function EditProductPage() {
   if (!product) return <p>Loading...</p>;
 
   return (
-    <div className="max-w-2xl mx-auto py-8">
+      <div className="edit-product-page container py-5">
       <h2 className="text-2xl font-bold mb-4">Edit Product</h2>
-      <form onSubmit={handleSubmit} className="space-y-3 bg-white p-4 rounded shadow">
+      <form onSubmit={handleSubmit} className="edit-product-card">
         <div>
           <label className="block text-sm">Name</label>
           <input className="w-full border px-2 py-1" value={product.name} onChange={(e) => setProduct({ ...product, name: e.target.value })} required />
+        </div>
+        <div>
+          <label className="block text-sm">Image</label>
+          <input type="file" accept="image/*" className="w-full" onChange={(e) => {
+            const file = e.target.files && e.target.files[0];
+            setSelectedFile(file || null);
+            if (file) {
+              setPreviewUrl(URL.createObjectURL(file));
+            }
+          }} />
+
+          {previewUrl && (
+            <div className="mt-2">
+              <img src={previewUrl} alt="preview" className="img-fluid" style={{ maxHeight: 200 }} />
+            </div>
+          )}
         </div>
         <div>
           <label className="block text-sm">Description</label>

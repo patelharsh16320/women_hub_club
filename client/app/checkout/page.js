@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 export default function Checkout() {
@@ -7,27 +7,104 @@ export default function Checkout() {
 	const [address, setAddress] = useState('');
 	const [card, setCard] = useState('');
 	const [sent, setSent] = useState(false);
+	const [cart, setCart] = useState([]);
 	const router = useRouter();
+
+	useEffect(() => {
+		try {
+			const raw = localStorage.getItem('cart');
+			setCart(raw ? JSON.parse(raw) : []);
+		} catch {
+			setCart([]);
+		}
+	}, []);
+
+	const total = cart
+		.reduce((s, item) => s + (item.price || 0) * (item.qty || 1), 0)
+		.toFixed(2);
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
-		// demo: clear cart and show confirmation
 		localStorage.removeItem('cart');
 		setSent(true);
 		setTimeout(() => router.push('/'), 1500);
 	};
 
 	return (
-		<section className="max-w-3xl mx-auto p-6">
-			<h1 className="text-2xl font-bold mb-4">Checkout</h1>
-			{sent ? <p className="text-green-600">Order placed (demo). Redirecting...</p> : (
-				<form onSubmit={handleSubmit} className="space-y-4">
-					<input placeholder="Full name" value={name} onChange={e => setName(e.target.value)} className="w-full p-2 border rounded" required />
-					<input placeholder="Shipping address" value={address} onChange={e => setAddress(e.target.value)} className="w-full p-2 border rounded" required />
-					<input placeholder="Card number" value={card} onChange={e => setCard(e.target.value)} className="w-full p-2 border rounded" required />
-					<button className="bg-purple-600 text-white px-4 py-2 rounded">Place Order</button>
-				</form>
+		<div className="checkout-container">
+
+			<h1 className="checkout-title">Checkout</h1>
+
+			{sent ? (
+				<p className="order-success">
+					Order placed successfully! Redirecting...
+				</p>
+			) : (
+				<div className="checkout-layout">
+
+					{/* LEFT — FORM */}
+					<form onSubmit={handleSubmit} className="checkout-form">
+
+						<h3>Shipping Details</h3>
+
+						<div className="form-group">
+							<label>Full Name</label>
+							<input
+								value={name}
+								onChange={e => setName(e.target.value)}
+								required
+							/>
+						</div>
+
+						<div className="form-group">
+							<label>Shipping Address</label>
+							<input
+								value={address}
+								onChange={e => setAddress(e.target.value)}
+								required
+							/>
+						</div>
+
+						<h3 className="mt-4">Payment</h3>
+
+						<div className="form-group">
+							<label>Card Number</label>
+							<input
+								value={card}
+								onChange={e => setCard(e.target.value)}
+								required
+							/>
+						</div>
+
+						<button className="place-order-btn">
+							Place Order
+						</button>
+
+					</form>
+
+					{/* RIGHT — ORDER SUMMARY */}
+					<div className="checkout-summary">
+
+						<h3>Order Summary</h3>
+
+						{cart.map((item) => (
+							<div key={item._id} className="summary-item">
+								<span>{item.name} × {item.qty || 1}</span>
+								<span>₹ {(item.price * (item.qty || 1)).toFixed(2)}</span>
+							</div>
+						))}
+
+						<hr />
+
+						<div className="summary-total">
+							<span>Total</span>
+							<span>₹ {total}</span>
+						</div>
+
+					</div>
+
+				</div>
 			)}
-		</section>
+		</div>
 	);
 }

@@ -1,8 +1,38 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 
 export default function Header() {
+  const [count, setCount] = useState(0);
+
+  const computeCount = () => {
+    try {
+      const raw = localStorage.getItem("cart");
+      const cart = raw ? JSON.parse(raw) : [];
+      const total = cart.reduce((s, i) => s + (i.qty || 1), 0);
+      setCount(total);
+    } catch (e) {
+      setCount(0);
+    }
+  };
+
+  useEffect(() => {
+    computeCount();
+    // update when localStorage changes in other tabs
+    const onStorage = (e) => {
+      if (e.key === "cart") computeCount();
+    };
+    // custom event from AddToCartButton
+    const onCartUpdated = () => computeCount();
+    window.addEventListener("storage", onStorage);
+    window.addEventListener("cartUpdated", onCartUpdated);
+    return () => {
+      window.removeEventListener("storage", onStorage);
+      window.removeEventListener("cartUpdated", onCartUpdated);
+    };
+  }, []);
+
   return (
     <header className="main-header">
       <nav className="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
@@ -114,8 +144,13 @@ export default function Header() {
 
               {/* CART */}
               <li className="nav-item">
-                <Link href="/cart" className="nav-link">
+                <Link href="/cart" className="nav-link position-relative">
                   🛒 Cart
+                  {count > 0 && (
+                    <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                      {count}
+                    </span>
+                  )}
                 </Link>
               </li>
 

@@ -1,13 +1,21 @@
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export const fetchAPI = async (endpoint, options = {}) => {
-  const res = await fetch(`${BASE_URL}${endpoint}`, {
-    headers: {
-      "Content-Type": "application/json",
-    },
+  const url = `${BASE_URL}${endpoint}`;
+
+  // If the body is FormData, let fetch set the headers (don't set Content-Type)
+  const isForm = typeof FormData !== "undefined" && options.body instanceof FormData;
+
+  const fetchOptions = {
     cache: "no-store",
     ...options,
-  });
+    headers: {
+      ...(options.headers || {}),
+      ...(isForm ? {} : { "Content-Type": "application/json" }),
+    },
+  };
+
+  const res = await fetch(url, fetchOptions);
 
   if (!res.ok) {
     const text = await res.text();

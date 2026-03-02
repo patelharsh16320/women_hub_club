@@ -51,6 +51,7 @@ export default function ManageProductsPage() {
         <thead className="table-light">
           <tr>
             <th>Name</th>
+            <th>Image</th>
             <th>Price</th>
             <th>Category</th>
             <th className="text-center">Actions</th>
@@ -58,9 +59,20 @@ export default function ManageProductsPage() {
         </thead>
 
         <tbody>
-          {products.map((p) => (
+          {products.map((p) => {
+            // resolve image URL (server stores /uploads/filename)
+            const apiBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+            const apiOrigin = (apiBase || "").replace(/\/?api\/?$/i, "");
+            let imgSrc = p.image || "";
+            if (imgSrc.startsWith("/uploads")) imgSrc = `${apiOrigin}${imgSrc}`;
+            if (imgSrc.startsWith("uploads")) imgSrc = `${apiOrigin}/${imgSrc}`;
+
+            return (
             <tr key={p._id}>
               <td className="fw-medium">{p.name}</td>
+              <td className="fw-medium">
+                {imgSrc ? <img src={imgSrc} width={100} className="img-fluid" alt={p.name} /> : <span className="text-muted">No image</span>}
+              </td>
               <td>₹ {p.price}</td>
               <td>
                 <span className="badge bg-secondary">
@@ -84,7 +96,8 @@ export default function ManageProductsPage() {
                 </button>
               </td>
             </tr>
-          ))}
+            );
+          })}
         </tbody>
       </table>
     </div>

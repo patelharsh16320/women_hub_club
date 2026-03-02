@@ -21,10 +21,10 @@ export default function CreateCategoryPage() {
   };
 
   return (
-    <div className="max-w-md mx-auto py-8">
+    <div className="create-category-page container py-5">
       <h2 className="text-2xl font-bold mb-4">Create Category</h2>
-      <form onSubmit={submit} className="space-y-3 bg-white p-4 rounded shadow">
-        <div>
+      <form onSubmit={submit} className="create-category-card">
+        <div className="mb-3">
           <label className="block text-sm">Name</label>
           <input className="w-full border px-2 py-1" value={name} onChange={(e) => setName(e.target.value)} required />
         </div>

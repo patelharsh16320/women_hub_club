@@ -36,19 +36,19 @@ export default function UsersListPage() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto py-8">
-      <div className="flex items-center justify-between mb-4">
+    <div className="users-page container py-5">
+      <div className="users-header">
         <h1 className="text-2xl font-bold">Users</h1>
-        <Link href="/users/create" className="btn btn-dark">
-          Create User
+        <Link href="/users/create" className="btn btn-dark create-btn">
+          + Create User
         </Link>
       </div>
 
       {loading && <p>Loading...</p>}
       {error && <p className="text-red-600">{error}</p>}
 
-      <div className="overflow-x-auto bg-white rounded shadow">
-        <table className="min-w-full">
+      <div className="users-card">
+        <table className="users-table">
           <thead className="bg-gray-100">
             <tr>
               <th className="p-2 text-left">Name</th>
@@ -66,10 +66,11 @@ export default function UsersListPage() {
                 <td className="p-2 text-center">
                   <Link
                     href={`/users/${u._id || u.id}`}
-                    className="btn btn-sm btn-outline mr-2"
+                    className="btn btn-sm btn-outline-dark me-2"
                   >
                     Edit
                   </Link>
+
                   <button
                     onClick={() => handleDelete(u._id || u.id)}
                     className="btn btn-sm btn-danger"

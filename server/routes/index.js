@@ -20,7 +20,7 @@ router.delete("/users/:id", user.deleteUser);
 router.post("/products", upload.single("image"), product.createProduct);
 router.get("/products", product.getProducts);
 router.get("/products/:id", product.getProductById);
-router.post("/products/:id", product.updateProduct);
+router.post("/products/:id", upload.single("image"), product.updateProduct);
 router.delete("/products/:id", product.deleteProduct);
 
 /* CART */

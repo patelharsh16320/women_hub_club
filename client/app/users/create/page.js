@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { fetchAPI } from "../../../services/api";
+import Link from "next/link";
 
 export default function CreateUserPage() {
   const router = useRouter();
@@ -33,11 +34,14 @@ export default function CreateUserPage() {
   };
 
   return (
-    <div className="max-w-md mx-auto py-8">
+    <div className="create-user-page container py-5">
       <h2 className="text-2xl font-bold mb-4">Create User</h2>
-      {error && <p className="text-red-600">{error}</p>}
-      <form onSubmit={submit} className="space-y-3 bg-white p-4 rounded shadow">
-        <div>
+      {error && <p className="form-error">{error}</p>}
+        <Link href="/users" className="btn btn-dark create-btn">
+          + Back to Users
+        </Link>
+      <form onSubmit={submit} className="create-user-card">
+        <div className="mb-3">
           <label className="block text-sm">Name</label>
           <input className="w-full border px-2 py-1" value={name} onChange={(e) => setName(e.target.value)} required />
         </div>

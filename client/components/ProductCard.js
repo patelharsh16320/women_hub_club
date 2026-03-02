@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import AddToCartButton from "./AddToCartButton";
 function resolveImageUrl(imagePath) {
   if (!imagePath) return "";
   if (imagePath.startsWith("http://") || imagePath.startsWith("https://")) return imagePath;
@@ -50,12 +51,15 @@ export default function ProductCard({ product }) {
           </span>
 
           {/* Button */}
-          <Link
-            href={`/products/${product._id}`}
-            className="btn btn-dark mt-auto"
-          >
-            View Product
-          </Link>
+          <div className="d-flex gap-2 mt-auto">
+            <AddToCartButton product={{ _id: product._id, name: product.name, price: product.price, image: imgSrc }} redirectToCart={false} />
+            <Link
+              href={`/products/${product._id}`}
+              className="btn btn-dark"
+            >
+              View Product
+            </Link>
+          </div>
         </div>
       </div>
     </div>
