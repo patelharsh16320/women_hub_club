@@ -219,6 +219,113 @@ input:-webkit-autofill,input:-webkit-autofill:focus,input:-webkit-autofill:hover
 .view-btn:hover{background:#111;color:#fff}
 .empty{text-align:center;padding:40px;color:#777}
 .loading{margin-bottom:15px;color:#666}
+.contact-page{min-height:100vh;background:#f4f6f8;display:flex;align-items:center;justify-content:center;padding:40px 20px;font-family:Inter,Arial,sans-serif}
+.contact-card{width:100%;max-width:1000px;background:#fff;border-radius:14px;display:grid;grid-template-columns:1fr 1.2fr;overflow:hidden;box-shadow:0 20px 50px rgba(0,0,0,.08)}
+.contact-info{background:#111;color:#fff;padding:50px 40px}
+.contact-info h1{margin:0 0 10px;font-size:32px}
+.subtitle{color:#cfcfcf;margin-bottom:30px;line-height:1.6}
+.info-block{margin-top:25px}
+.info-block h4{margin-bottom:5px;color:#aaa;font-weight:500}
+.contact-form-wrapper{padding:50px 40px}
+.contact-form{display:flex;flex-direction:column;gap:18px}
+.form-group{display:flex;flex-direction:column}
+.form-group label{font-size:14px;margin-bottom:6px;color:#555}
+.form-group input,.form-group textarea{padding:12px;border-radius:6px;border:1px solid #ddd;font-size:15px;transition:.2s}
+.form-group input:focus,.form-group textarea:focus{outline:0;border-color:#111;box-shadow:0 0 0 2px rgba(0,0,0,.05)}
+.send-btn{margin-top:10px;background:#111;color:#fff;border:none;padding:14px;border-radius:6px;cursor:pointer;font-weight:600;transition:.2s}
+.send-btn:hover{background:#000;transform:translateY(-1px)}
+.success-msg{background:#ecfdf5;color:#065f46;border:1px solid #a7f3d0;padding:12px;border-radius:6px;margin-bottom:20px;font-size:14px}
+/* ===== ABOUT PAGE DARK THEME ===== */
+
+.about-wrapper {
+	min-height: 100vh;
+	background: #0f1115;
+	padding: 60px 20px;
+	color: #e5e7eb;
+}
+
+.about-container {
+	max-width: 900px;
+	margin: auto;
+}
+
+.about-title {
+	text-align: center;
+	font-size: 36px;
+	font-weight: 700;
+	margin-bottom: 40px;
+	color: #ffffff;
+	letter-spacing: 1px;
+}
+
+/* Main Card */
+.about-card {
+	background: #171a21;
+	border-radius: 14px;
+	padding: 40px;
+	box-shadow: 0 15px 40px rgba(0,0,0,0.5);
+	border: 1px solid rgba(255,255,255,0.05);
+}
+
+/* Sections */
+.about-section {
+	margin-bottom: 35px;
+	padding-bottom: 25px;
+	border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.about-section:last-child {
+	border-bottom: none;
+	margin-bottom: 0;
+}
+
+/* Headings */
+.about-section h2 {
+	font-size: 22px;
+	margin-bottom: 12px;
+	color: #ffffff;
+	font-weight: 600;
+	position: relative;
+}
+
+/* Accent line */
+.about-section h2::after {
+	content: "";
+	display: block;
+	width: 50px;
+	height: 2px;
+	background: #7c3aed;
+	margin-top: 8px;
+}
+
+/* Text */
+.about-section p {
+	color: #b9c0cc;
+	line-height: 1.7;
+	font-size: 15px;
+}
+
+/* List styling */
+.about-section ul {
+	padding-left: 18px;
+}
+
+.about-section li {
+	margin-bottom: 8px;
+	color: #cbd5e1;
+}
+
+/* Contact highlight */
+.contact-section {
+	background: rgba(124, 58, 237, 0.08);
+	padding: 20px;
+	border-radius: 10px;
+}
+@media (max-width:768px){
+.contact-card{grid-template-columns:1fr}
+.contact-info{padding:30px}
+.contact-form-wrapper{padding:30px}
+}
 @media print{
 body{background:#fff}
 .invoice-page{padding:0;background:#fff}
