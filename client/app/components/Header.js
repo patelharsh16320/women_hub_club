@@ -3,6 +3,10 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 
+const USER_ALLOWED = [
+  "/", "/about", "/contact", "/products", "/products/", "/products/[id]", "/account/login", "/account/logout", "/account/signup", "/cart", "/orders"
+];
+
 export default function Header() {
   const [count, setCount] = useState(0);
   const [user, setUser] = useState(null);
@@ -87,12 +91,10 @@ export default function Header() {
     <header className="main-header">
       <nav className="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
         <div className="container">
-
           {/* Logo */}
           <Link href="/" className="navbar-brand brand-logo">
             👩‍🦰 Women Hub
           </Link>
-
           {/* Mobile Toggle */}
           <button
             className="navbar-toggler"
@@ -102,97 +104,70 @@ export default function Header() {
           >
             <span className="navbar-toggler-icon"></span>
           </button>
-
           {/* Navbar Menu */}
           <div className="collapse navbar-collapse" id="navbarContent">
             <ul className="navbar-nav ms-auto align-items-lg-center">
-
+              {/* Home, About, Products, Contact always visible */}
               <li className="nav-item">
                 <Link href="/" className="nav-link">Home</Link>
               </li>
-
               <li className="nav-item">
                 <Link href="/about" className="nav-link">About</Link>
               </li>
-
-              {/* PRODUCTS DROPDOWN */}
               <li className="nav-item dropdown">
-                <button
-                  className="nav-link dropdown-toggle btn btn-link"
-                  data-bs-toggle="dropdown"
-                >
-                  Products
-                </button>
-
+                <button className="nav-link dropdown-toggle btn btn-link" data-bs-toggle="dropdown">Products</button>
                 <ul className="dropdown-menu dropdown-menu-end">
                   <li>
-                    <Link className="dropdown-item" href="/products">
-                      All Products
-                    </Link>
+                    <Link className="dropdown-item" href="/products">All Products</Link>
                   </li>
-                  <li>
-                    <Link className="dropdown-item" href="/products/create">
-                      Create Product
-                    </Link>
-                  </li>
-                  <li>
-                    <Link className="dropdown-item" href="/products/manage">
-                      Manage Products
-                    </Link>
-                  </li>
+                  {/* Only admin can see create/manage */}
+                  {user && user.role === "admin" && (
+                    <>
+                      <li>
+                        <Link className="dropdown-item" href="/products/create">Create Product</Link>
+                      </li>
+                      <li>
+                        <Link className="dropdown-item" href="/products/manage">Manage Products</Link>
+                      </li>
+                    </>
+                  )}
                 </ul>
               </li>
-
-              {/* CATEGORIES DROPDOWN */}
-              <li className="nav-item dropdown">
-                <button
-                  className="nav-link dropdown-toggle btn btn-link"
-                  data-bs-toggle="dropdown"
-                >
-                  Categories
-                </button>
-
-                <ul className="dropdown-menu dropdown-menu-end">
-                  <li>
-                    <Link className="dropdown-item" href="/categories">
-                      All Categories
-                    </Link>
-                  </li>
-                  <li>
-                    <Link className="dropdown-item" href="/categories/create">
-                      Create Category
-                    </Link>
-                  </li>
-                </ul>
-              </li>
-
-              {/* USERS DROPDOWN */}
-              <li className="nav-item dropdown">
-                <button
-                  className="nav-link dropdown-toggle btn btn-link"
-                  data-bs-toggle="dropdown"
-                >
-                  Users
-                </button>
-
-                <ul className="dropdown-menu dropdown-menu-end">
-                  <li>
-                    <Link className="dropdown-item" href="/users">
-                      All Users
-                    </Link>
-                  </li>
-                  <li>
-                    <Link className="dropdown-item" href="/users/create">
-                      Create User
-                    </Link>
-                  </li>
-                </ul>
-              </li>
-
-              <li className="nav-item">
-                <Link href="/orders" className="nav-link">Orders</Link>
-              </li>
-              {/* CART */}
+              {/* Categories - admin only */}
+              {user && user.role === "admin" && (
+                <li className="nav-item dropdown">
+                  <button className="nav-link dropdown-toggle btn btn-link" data-bs-toggle="dropdown">Categories</button>
+                  <ul className="dropdown-menu dropdown-menu-end">
+                    <li>
+                      <Link className="dropdown-item" href="/categories">All Categories</Link>
+                    </li>
+                    <li>
+                      <Link className="dropdown-item" href="/categories/create">Create Category</Link>
+                    </li>
+                  </ul>
+                </li>
+              )}
+              {/* Users - admin only */}
+              {user && user.role === "admin" && (
+                <li className="nav-item dropdown">
+                  <button className="nav-link dropdown-toggle btn btn-link" data-bs-toggle="dropdown">Users</button>
+                  <ul className="dropdown-menu dropdown-menu-end">
+                    <li>
+                      <Link className="dropdown-item" href="/users">All Users</Link>
+                    </li>
+                    <li>
+                      <Link className="dropdown-item" href="/users/create">Create User</Link>
+                    </li>
+                  </ul>
+                </li>
+              )}
+              {/* Orders - only logged in users */}
+              {user && (
+                <li className="nav-item">
+                  <Link href="/orders" className="nav-link">Orders</Link>
+                </li>
+              )}
+              {/* Cart - always visible */}
               <li className="nav-item">
                 <Link href="/cart" className="nav-link position-relative">
                   🛒 Cart
@@ -203,45 +178,32 @@ export default function Header() {
                   )}
                 </Link>
               </li>
-
-
-              {/* CONTACT BUTTON */}
+              {/* Contact always visible */}
               <li className="nav-item ms-lg-2">
-                <Link href="/contact" className="btn btn-dark rounded-pill px-3">
-                  Contact
-                </Link>
+                <Link href="/contact" className="btn btn-dark rounded-pill px-3">Contact</Link>
               </li>
-
-              {/* USER AUTH BUTTONS */}
+              {/* User Auth Buttons */}
               {user ? (
                 <>
                   <li className="nav-item ms-lg-2">
                     <span className="nav-link fw-bold text-primary">👤 {user.name}</span>
                   </li>
                   <li className="nav-item ms-lg-2">
-                    <button className="btn btn-outline-dark px-3" onClick={handleLogout}>
-                      Logout
-                    </button>
+                    <button className="btn btn-outline-dark px-3" onClick={handleLogout}>Logout</button>
                   </li>
                 </>
               ) : (
                 <>
                   <li className="nav-item ms-lg-2">
-                    <Link href="/account/login" className="btn btn-outline-dark px-3">
-                      Login
-                    </Link>
+                    <Link href="/account/login" className="btn btn-outline-dark px-3">Login</Link>
                   </li>
                   <li className="nav-item ms-lg-2">
-                    <Link href="/account/signup" className="btn btn-dark px-3">
-                      Signup
-                    </Link>
+                    <Link href="/account/signup" className="btn btn-dark px-3">Signup</Link>
                   </li>
                 </>
               )}
-
             </ul>
           </div>
-
         </div>
       </nav>
     </header>
