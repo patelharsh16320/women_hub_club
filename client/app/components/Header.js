@@ -5,6 +5,7 @@ import Link from "next/link";
 
 export default function Header() {
   const [count, setCount] = useState(0);
+  const [user, setUser] = useState(null);
 
   const computeCount = () => {
     try {
@@ -17,21 +18,52 @@ export default function Header() {
     }
   };
 
+  const computeUser = () => {
+    try {
+      const raw = localStorage.getItem("user");
+      const parsed = raw ? JSON.parse(raw) : null;
+      setUser(parsed);
+      console.log("[Header] Current user from localStorage:", parsed);
+    } catch {
+      setUser(null);
+      console.log("[Header] No valid user in localStorage");
+    }
+  };
+
   useEffect(() => {
     computeCount();
+    computeUser();
+    // Always log user info on render
+    try {
+      const raw = localStorage.getItem("user");
+      const parsed = raw ? JSON.parse(raw) : null;
+      console.log("[Header] User from localStorage:", parsed);
+    } catch {
+      console.log("[Header] No valid user in localStorage");
+    }
     // update when localStorage changes in other tabs
     const onStorage = (e) => {
       if (e.key === "cart") computeCount();
+      if (e.key === "user") computeUser();
     };
     // custom event from AddToCartButton
     const onCartUpdated = () => computeCount();
+    // custom event for user login/logout
+    const onUserChanged = () => computeUser();
     window.addEventListener("storage", onStorage);
     window.addEventListener("cartUpdated", onCartUpdated);
+    window.addEventListener("userChanged", onUserChanged);
     return () => {
       window.removeEventListener("storage", onStorage);
       window.removeEventListener("cartUpdated", onCartUpdated);
+      window.removeEventListener("userChanged", onUserChanged);
     };
   }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    window.dispatchEvent(new Event("userChanged"));
+  };
 
   return (
     <header className="main-header">
@@ -154,12 +186,40 @@ export default function Header() {
                 </Link>
               </li>
 
+
               {/* CONTACT BUTTON */}
               <li className="nav-item ms-lg-2">
                 <Link href="/contact" className="btn btn-dark rounded-pill px-3">
                   Contact
                 </Link>
               </li>
+
+              {/* USER AUTH BUTTONS */}
+              {user ? (
+                <>
+                  <li className="nav-item ms-lg-2">
+                    <span className="nav-link fw-bold text-primary">👤 {user.name}</span>
+                  </li>
+                  <li className="nav-item ms-lg-2">
+                    <button className="btn btn-outline-dark px-3" onClick={handleLogout}>
+                      Logout
+                    </button>
+                  </li>
+                </>
+              ) : (
+                <>
+                  <li className="nav-item ms-lg-2">
+                    <Link href="/account/login" className="btn btn-outline-dark px-3">
+                      Login
+                    </Link>
+                  </li>
+                  <li className="nav-item ms-lg-2">
+                    <Link href="/account/signup" className="btn btn-dark px-3">
+                      Signup
+                    </Link>
+                  </li>
+                </>
+              )}
 
             </ul>
           </div>

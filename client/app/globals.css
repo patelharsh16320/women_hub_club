@@ -280,6 +280,18 @@ input:-webkit-autofill,input:-webkit-autofill:focus,input:-webkit-autofill:hover
 .logout-text{font-size:14px;color:#6b7280;margin-bottom:20px}
 .logout-loader{width:30px;height:30px;border:3px solid #e5e7eb;border-top:3px solid #111827;border-radius:50%;margin:0 auto 15px;animation:spin .8s linear infinite}
 .logout-redirect{font-size:13px;color:#9ca3af}
+.auth-wrapper{min-height:100vh;background:linear-gradient(135deg,#f3f4f6,#e5e7eb);display:flex;align-items:center;justify-content:center;padding:20px}
+.auth-card{width:100%;max-width:420px;background:#fff;padding:40px;border-radius:18px;box-shadow:0 25px 60px rgba(0,0,0,.08);border:1px solid rgba(0,0,0,.05);transition:.3s ease}
+.auth-card:hover{transform:translateY(-4px)}
+.auth-title{font-weight:700;font-size:26px;color:#111827}
+.auth-subtitle{font-size:14px;color:#6b7280;margin-bottom:25px}
+.custom-input{border-radius:10px;padding:12px 14px;border:1px solid #d1d5db;transition:.3s ease}
+.custom-input:focus{border-color:#111827;box-shadow:0 0 0 3px rgba(17,24,39,.1)}
+.auth-btn{padding:12px;border-radius:10px;font-weight:600;transition:.3s ease}
+.auth-btn:hover{transform:translateY(-2px)}
+.auth-link{color:#111827;font-weight:600;text-decoration:none}
+.auth-link:hover{text-decoration:underline}
+.form-label{color:#000!important;font-weight:500}
 @keyframes spin{
 to{transform:rotate(360deg)}
 }
