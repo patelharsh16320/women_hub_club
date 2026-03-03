@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { fetchAPI } from "../../../../services/api";
+import { fetchAPI } from "../../../services/api";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -36,48 +36,52 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-12 p-6 bg-white rounded shadow">
-      <h2 className="text-2xl font-bold mb-4">Create account</h2>
-      {error && <div className="text-red-600 mb-2">{error}</div>}
-      <form onSubmit={submit}>
-        <label className="block mb-2">
-          <span className="text-sm">Name</span>
-          <input
-            className="w-full border rounded px-3 py-2 mt-1"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-          />
-        </label>
-        <label className="block mb-2">
-          <span className="text-sm">Email</span>
-          <input
-            type="email"
-            className="w-full border rounded px-3 py-2 mt-1"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </label>
-        <label className="block mb-4">
-          <span className="text-sm">Password</span>
-          <input
-            type="password"
-            className="w-full border rounded px-3 py-2 mt-1"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </label>
+    <div className="signup-wrapper">
+      <div className="signup-card">
+        <h2 className="signup-title">Create Account</h2>
 
-        <button
-          type="submit"
-          className="bg-purple-600 text-white px-4 py-2 rounded"
-          disabled={loading}
-        >
-          {loading ? "Creating..." : "Sign up"}
-        </button>
-      </form>
+        {error && <div className="signup-error">{error}</div>}
+
+        <form onSubmit={submit} className="signup-form">
+
+          <div className="form-group">
+            <label>Name</label>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+            />
+          </div>
+
+          <div className="form-group">
+            <label>Email</label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
+
+          <div className="form-group">
+            <label>Password</label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
+
+          <button type="submit" disabled={loading} className="signup-btn">
+            {loading ? "Creating..." : "Sign Up"}
+          </button>
+          <p className="login-footer">
+            Already have an account? <a href="/account/login">Sign in</a>
+          </p>
+        </form>
+      </div>
     </div>
   );
 }

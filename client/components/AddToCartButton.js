@@ -10,8 +10,13 @@ export default function AddToCartButton({ product, redirectToCart = true }) {
   const handleAdd = () => {
     try {
       setAdding(true);
+      const user = (() => { try { return JSON.parse(localStorage.getItem('user')); } catch { return null; } })();
+      if (!user) {
+        window.location.href = '/account/login';
+        return;
+      }
       const raw = localStorage.getItem("cart");
-      const cart = raw ? JSON.parse(raw) : [];
+      let cart = raw ? JSON.parse(raw) : [];
 
       const id = product._id || product.id;
       const existing = cart.find((i) => i._id === id || i.id === id);

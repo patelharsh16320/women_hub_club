@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { fetchAPI } from "../../../../services/api";
+import { fetchAPI } from "../../../services/api";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -33,40 +33,46 @@ export default function LoginPage() {
     }
   };
 
-  return (
-    <div className="max-w-md mx-auto mt-12 p-6 bg-white rounded shadow">
-      <h2 className="text-2xl font-bold mb-4">Sign in</h2>
-      {error && <div className="text-red-600 mb-2">{error}</div>}
-      <form onSubmit={submit}>
-        <label className="block mb-2">
-          <span className="text-sm">Email</span>
+return (
+  <div className="login-wrapper">
+    <div className="login-card">
+      <h2 className="login-title">Welcome Back</h2>
+      <p className="login-subtitle">Sign in to continue</p>
+
+      {error && <div className="login-error">{error}</div>}
+
+      <form onSubmit={submit} className="login-form">
+        
+        <div className="form-group">
+          <label>Email</label>
           <input
             type="email"
-            className="w-full border rounded px-3 py-2 mt-1"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
           />
-        </label>
-        <label className="block mb-4">
-          <span className="text-sm">Password</span>
+        </div>
+
+        <div className="form-group">
+          <label>Password</label>
           <input
             type="password"
-            className="w-full border rounded px-3 py-2 mt-1"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
           />
-        </label>
+        </div>
 
-        <button
-          type="submit"
-          className="bg-purple-600 text-white px-4 py-2 rounded"
-          disabled={loading}
-        >
-          {loading ? "Signing in..." : "Sign in"}
+        <button type="submit" disabled={loading} className="login-btn">
+          {loading ? "Signing in..." : "Sign In"}
         </button>
+
+        <p className="login-footer">
+          Don’t have an account? <a href="/account/signup">Create one</a>
+        </p>
+
       </form>
     </div>
-  );
+  </div>
+);
 }

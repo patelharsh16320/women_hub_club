@@ -235,91 +235,53 @@ input:-webkit-autofill,input:-webkit-autofill:focus,input:-webkit-autofill:hover
 .send-btn{margin-top:10px;background:#111;color:#fff;border:none;padding:14px;border-radius:6px;cursor:pointer;font-weight:600;transition:.2s}
 .send-btn:hover{background:#000;transform:translateY(-1px)}
 .success-msg{background:#ecfdf5;color:#065f46;border:1px solid #a7f3d0;padding:12px;border-radius:6px;margin-bottom:20px;font-size:14px}
-/* ===== ABOUT PAGE DARK THEME ===== */
-
-.about-wrapper {
-	min-height: 100vh;
-	background: #0f1115;
-	padding: 60px 20px;
-	color: #e5e7eb;
-}
-
-.about-container {
-	max-width: 900px;
-	margin: auto;
-}
-
-.about-title {
-	text-align: center;
-	font-size: 36px;
-	font-weight: 700;
-	margin-bottom: 40px;
-	color: #ffffff;
-	letter-spacing: 1px;
-}
-
-/* Main Card */
-.about-card {
-	background: #171a21;
-	border-radius: 14px;
-	padding: 40px;
-	box-shadow: 0 15px 40px rgba(0,0,0,0.5);
-	border: 1px solid rgba(255,255,255,0.05);
-}
-
-/* Sections */
-.about-section {
-	margin-bottom: 35px;
-	padding-bottom: 25px;
-	border-bottom: 1px solid rgba(255,255,255,0.06);
-}
-
-.about-section:last-child {
-	border-bottom: none;
-	margin-bottom: 0;
-}
-
-/* Headings */
-.about-section h2 {
-	font-size: 22px;
-	margin-bottom: 12px;
-	color: #ffffff;
-	font-weight: 600;
-	position: relative;
-}
-
-/* Accent line */
-.about-section h2::after {
-	content: "";
-	display: block;
-	width: 50px;
-	height: 2px;
-	background: #7c3aed;
-	margin-top: 8px;
-}
-
-/* Text */
-.about-section p {
-	color: #b9c0cc;
-	line-height: 1.7;
-	font-size: 15px;
-}
-
-/* List styling */
-.about-section ul {
-	padding-left: 18px;
-}
-
-.about-section li {
-	margin-bottom: 8px;
-	color: #cbd5e1;
-}
-
-/* Contact highlight */
-.contact-section {
-	background: rgba(124, 58, 237, 0.08);
-	padding: 20px;
-	border-radius: 10px;
+.about-wrapper{min-height:100vh;background:#0f1115;padding:60px 20px;color:#e5e7eb}
+.about-container{max-width:900px;margin:auto}
+.about-title{text-align:center;font-size:36px;font-weight:700;margin-bottom:40px;color:#fff;letter-spacing:1px}
+.about-card{background:#171a21;border-radius:14px;padding:40px;box-shadow:0 15px 40px rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.05)}
+.about-section{margin-bottom:35px;padding-bottom:25px;border-bottom:1px solid rgba(255,255,255,.06)}
+.about-section:last-child{border-bottom:none;margin-bottom:0}
+.about-section h2{font-size:22px;margin-bottom:12px;color:#fff;font-weight:600;position:relative}
+.about-section h2::after{content:"";display:block;width:50px;height:2px;background:#7c3aed;margin-top:8px}
+.about-section p{color:#b9c0cc;line-height:1.7;font-size:15px}
+.about-section ul{padding-left:18px}
+.about-section li{margin-bottom:8px;color:#cbd5e1}
+.contact-section{background:rgba(124,58,237,.08);padding:20px;border-radius:10px}
+.signup-wrapper{min-height:100vh;background:linear-gradient(135deg,#f8f9fb,#eef1f6);display:flex;align-items:center;justify-content:center;padding:20px}
+.signup-card{width:100%;max-width:420px;background:#fff;padding:40px;border-radius:14px;box-shadow:0 20px 50px rgba(0,0,0,.08);border:1px solid rgba(0,0,0,.04)}
+.signup-title{font-size:26px;font-weight:700;color:#111827;margin-bottom:25px;text-align:center}
+.signup-error{background:#fee2e2;color:#b91c1c;padding:10px 14px;border-radius:8px;font-size:14px;margin-bottom:15px}
+.signup-form{display:flex;flex-direction:column;gap:18px}
+.form-group label{font-size:14px;font-weight:500;color:#374151;margin-bottom:6px;display:block}
+.form-group input{width:100%;padding:11px 14px;border-radius:8px;border:1px solid #d1d5db;font-size:14px;transition:all .3s ease;background:#fff;color:#111827}
+.form-group input:focus{outline:0;border-color:#7c3aed;box-shadow:0 0 0 3px rgba(124,58,237,.15)}
+.signup-btn{margin-top:10px;padding:12px;border-radius:8px;border:none;background:#111827;color:#fff;font-weight:600;font-size:15px;cursor:pointer;transition:all .3s ease}
+.signup-btn:hover{background:#000;transform:translateY(-2px)}
+.signup-btn:disabled{background:#9ca3af;cursor:not-allowed;transform:none}
+.login-wrapper{min-height:100vh;background:linear-gradient(135deg,#f8f9fb,#eef1f6);display:flex;align-items:center;justify-content:center;padding:20px}
+.login-card{width:100%;max-width:420px;background:#fff;padding:40px;border-radius:14px;box-shadow:0 20px 50px rgba(0,0,0,.08);border:1px solid rgba(0,0,0,.04)}
+.login-title{font-size:26px;font-weight:700;color:#111827;text-align:center}
+.login-subtitle{text-align:center;font-size:14px;color:#6b7280;margin-bottom:25px}
+.login-error{background:#fee2e2;color:#b91c1c;padding:10px 14px;border-radius:8px;font-size:14px;margin-bottom:15px}
+.login-form{display:flex;flex-direction:column;gap:18px}
+.form-group label{font-size:14px;font-weight:500;color:#374151;margin-bottom:6px;display:block}
+.form-group input{width:100%;padding:11px 14px;border-radius:8px;border:1px solid #d1d5db;font-size:14px;transition:all .3s ease;background:#fff;color:#111827}
+.form-group input:focus{outline:0;border-color:#111827;box-shadow:0 0 0 3px rgba(17,24,39,.1)}
+.login-btn{margin-top:10px;padding:12px;border-radius:8px;border:none;background:#111827;color:#fff;font-weight:600;font-size:15px;cursor:pointer;transition:all .3s ease}
+.login-btn:hover{background:#000;transform:translateY(-2px)}
+.login-btn:disabled{background:#9ca3af;cursor:not-allowed;transform:none}
+.login-footer{margin-top:15px;font-size:14px;text-align:center;color:#6b7280}
+.login-footer a{color:#111827;font-weight:600;text-decoration:none}
+.login-footer a:hover{text-decoration:underline}
+.logout-wrapper{min-height:100vh;background:linear-gradient(135deg,#f8f9fb,#eef1f6);display:flex;align-items:center;justify-content:center;padding:20px}
+.logout-card{background:#fff;padding:40px;border-radius:16px;width:100%;max-width:420px;text-align:center;box-shadow:0 20px 50px rgba(0,0,0,.08);border:1px solid rgba(0,0,0,.04)}
+.logout-icon{width:60px;height:60px;margin:0 auto 20px;background:#111827;color:#fff;font-size:28px;font-weight:700;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.logout-title{font-size:24px;font-weight:700;color:#111827;margin-bottom:10px}
+.logout-text{font-size:14px;color:#6b7280;margin-bottom:20px}
+.logout-loader{width:30px;height:30px;border:3px solid #e5e7eb;border-top:3px solid #111827;border-radius:50%;margin:0 auto 15px;animation:spin .8s linear infinite}
+.logout-redirect{font-size:13px;color:#9ca3af}
+@keyframes spin{
+to{transform:rotate(360deg)}
 }
 @media (max-width:768px){
 .contact-card{grid-template-columns:1fr}

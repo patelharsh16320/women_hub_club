@@ -17,13 +17,19 @@ export default function Checkout() {
 	const router = useRouter();
 
 	useEffect(() => {
+		// Require login
+		const user = (() => { try { return JSON.parse(localStorage.getItem('user')); } catch { return null; } })();
+		if (!user) {
+			router.push('/account/login');
+			return;
+		}
 		try {
 			const raw = localStorage.getItem('cart');
 			setCart(raw ? JSON.parse(raw) : []);
 		} catch {
 			setCart([]);
 		}
-	}, []);
+	}, [router]);
 
 	const total = cart
 		.reduce((s, item) => s + (item.price || 0) * (item.qty || 1), 0)

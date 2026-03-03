@@ -47,4 +47,9 @@ router.get("/categories/:id", category.getCategoryById);
 router.post("/categories/:id", category.updateCategory);
 router.delete("/categories/:id", category.deleteCategory);
 
+// Auth routes
+router.post('/auth/signup', user.signup);
+router.post('/auth/login', user.login);
+router.post('/auth/logout', user.logout);
+
 module.exports = router;

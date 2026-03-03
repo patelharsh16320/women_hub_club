@@ -2,21 +2,21 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 
+
+import { useRouter } from 'next/navigation';
+
 export default function CartPage() {
 	const [cart, setCart] = useState([]);
-
-	const updateCartStorage = (newCart) => {
-		try {
-			localStorage.setItem('cart', JSON.stringify(newCart));
-			setCart(newCart);
-			// notify other components
-			try { window.dispatchEvent(new CustomEvent('cartUpdated', { detail: { cart: newCart } })); } catch (e) { }
-		} catch (e) {
-			console.error('Failed to update cart storage', e);
-		}
-	};
+	const router = useRouter();
 
 	useEffect(() => {
+		// Require login
+		const user = (() => { try { return JSON.parse(localStorage.getItem('user')); } catch { return null; } })();
+		if (!user) {
+			router.push('/account/login');
+			return;
+		}
+
 		try {
 			const raw = localStorage.getItem('cart');
 			setCart(raw ? JSON.parse(raw) : []);
@@ -38,7 +38,7 @@ export default function CartPage() {
 			window.removeEventListener('cartUpdated', onCartUpdated);
 			window.removeEventListener('storage', onCartUpdated);
 		};
-	}, []);
+	}, [router]);
 
 	const total = cart
 		.reduce((s, item) => s + (item.price || 0) * (item.qty || 1), 0)
