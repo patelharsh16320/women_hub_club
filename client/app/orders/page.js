@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 export default function OrdersPage() {
-    
+
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(false);
   const [checkingAuth, setCheckingAuth] = useState(true);
@@ -53,8 +53,8 @@ export default function OrdersPage() {
             <tr key={order._id}>
               <td>{order._id}</td>
               <td>{new Date(order.createdAt).toLocaleString()}</td>
-              <td>{order.status}</td>
-              <td>₹ {order.total}</td>
+              <td>{order.status || 'inprogress'}</td>
+              <td>₹ {order.total || order.totalPrice || 0}</td>
               <td>
                 <Link href={`/orders/${order._id}`} className="btn btn-sm btn-outline-dark">
                   View

@@ -4,6 +4,9 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { createInvoice } from '@/services/invoiceService';
 import { getUserById } from '@/services/userService';
+import { createOrder } from '@/services/orderService';
+import { getCartKey, clearUserCart } from '@/services/userCart';
+
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import StripeCheckoutForm from '../components/StripeCheckoutForm';
@@ -15,75 +18,153 @@ export default function Checkout() {
 	// const [card, setCard] = useState('');
 	const [sent, setSent] = useState(false);
 	const [cart, setCart] = useState([]);
+	const [coupon, setCoupon] = useState('');
+	const [discount, setDiscount] = useState(0);
+	const [couponMsg, setCouponMsg] = useState('');
+	const [paymentType, setPaymentType] = useState('stripe'); // 'stripe' or 'cod'
 	const router = useRouter();
 
-	useEffect(() => {
-		// Require login
-		const user = (() => { try { return JSON.parse(localStorage.getItem('user')); } catch { return null; } })();
-		if (!user) {
-			router.push('/account/login');
-			return;
-		}
-		// Prefill user details from backend
-		(async () => {
-			try {
-				const userData = await getUserById(user._id);
-				setName(userData.name || '');
-				setEmail(userData.email || '');
-				setAddress(userData.address || '');
-			} catch (e) {
-				setName(user.name || '');
-				setEmail(user.email || '');
-			}
-		})();
-		try {
-			const raw = localStorage.getItem('cart');
-			setCart(raw ? JSON.parse(raw) : []);
-		} catch {
-			setCart([]);
-		}
-	}, [router]);
+			useEffect(() => {
+				// Require login
+				const user = (() => { try { return JSON.parse(localStorage.getItem('user')); } catch { return null; } })();
+				if (!user) {
+					router.push('/account/login');
+					return;
+				}
+				// Prefill user details from backend
+				(async () => {
+					try {
+						const userData = await getUserById(user._id);
+						setName(userData.name || '');
+						setEmail(userData.email || '');
+						setAddress(userData.address || '');
+					} catch (e) {
+						setName(user.name || '');
+						setEmail(user.email || '');
+					}
+				})();
+				// Use user-specific cart key
+				const cartKey = getCartKey(user);
+				try {
+					const raw = localStorage.getItem(cartKey);
+					setCart(raw ? JSON.parse(raw) : []);
+				} catch {
+					setCart([]);
+				}
+			}, [router]);
 
-	const total = cart
-		.reduce((s, item) => s + (item.price || 0) * (item.qty || 1), 0)
-		.toFixed(2);
+	const subtotal = cart.reduce((s, item) => s + (item.price || 0) * (item.qty || 1), 0);
+	const total = (subtotal - discount).toFixed(2);
+
+	// Simple coupon logic (demo): code 'SAVE10' gives 10% off
+	const handleApplyCoupon = (e) => {
+		e.preventDefault();
+		if (coupon.trim().toUpperCase() === 'SAVE10') {
+			const disc = Math.round(subtotal * 0.10);
+			setDiscount(disc);
+			setCouponMsg('Coupon applied! 10% off');
+		} else {
+			setDiscount(0);
+			setCouponMsg('Invalid coupon code');
+		}
+	};
 
 	// Stripe publishable key (test mode)
 	const stripePromise = loadStripe('pk_test_51Nw...your_test_key_here');
 
-	// Only submit invoice after Stripe payment success
+
+	// Handle Stripe payment (card)
 	const handleStripePayment = async (stripePayment) => {
 		if (!cart.length) return alert('Cart is empty');
-
-		const items = cart.map(i => ({ product: i._id, name: i.name, price: Number(i.price) || 0, qty: i.qty || 1 }));
-		const subtotal = items.reduce((s, it) => s + (it.price || 0) * (it.qty || 1), 0);
-		const shipping = 0;
-		const total = subtotal + shipping;
-
+		const user = (() => { try { return JSON.parse(localStorage.getItem('user')); } catch { return null; } })();
+		if (!user) return alert('User not found');
+		const orderItems = cart.map(i => ({ product: i._id, qty: i.qty || 1 }));
+		const totalPrice = subtotal - discount;
 		try {
 			setSent(true);
-			const payload = {
+			// 1. Create order in backend
+			const orderPayload = {
+				user: user._id,
+				orderItems,
+				totalPrice,
+				isPaid: stripePayment.paymentStatus === 'paid',
+				paymentId: stripePayment.paymentId,
+				paymentMethod: stripePayment.paymentMethod,
+				coupon: coupon.trim(),
+				discount
+			};
+			await createOrder(orderPayload);
+			// 2. Optionally, create invoice as before
+			const items = cart.map(i => ({ product: i._id, name: i.name, price: Number(i.price) || 0, qty: i.qty || 1 }));
+			const shipping = 0;
+			const invoicePayload = {
 				customerName: name,
 				customerEmail: email,
 				items,
 				subtotal,
 				shipping,
-				total,
+				total: subtotal - discount,
 				paymentMethod: stripePayment.paymentMethod,
 				paymentStatus: stripePayment.paymentStatus,
-				paymentId: stripePayment.paymentId
+				paymentId: stripePayment.paymentId,
+				coupon: coupon.trim(),
+				discount
 			};
-
-			const invoice = await createInvoice(payload);
-
-			// clear cart and notify
-			localStorage.removeItem('cart');
-			try { window.dispatchEvent(new CustomEvent('cartUpdated', { detail: { cart: [] } })); } catch (e) {}
-
-			// redirect to invoice detail
+			const invoice = await createInvoice(invoicePayload);
+			// 3. Clear user cart
+			clearUserCart(user);
+			// 4. Redirect to invoice detail
 			router.push(`/invoices/${invoice._id}`);
 		} catch (err) {
-			console.error('Checkout create invoice error:', err);
+			console.error('Checkout create invoice/order error:', err);
+			alert(err?.message || 'Failed to place order');
+			setSent(false);
+		}
+	};
+
+	// Handle Cash on Delivery
+	const handleCOD = async (e) => {
+		e.preventDefault();
+		if (!cart.length) return alert('Cart is empty');
+		const user = (() => { try { return JSON.parse(localStorage.getItem('user')); } catch { return null; } })();
+		if (!user) return alert('User not found');
+		const orderItems = cart.map(i => ({ product: i._id, qty: i.qty || 1 }));
+		const totalPrice = subtotal - discount;
+		try {
+			setSent(true);
+			// 1. Create order in backend
+			const orderPayload = {
+				user: user._id,
+				orderItems,
+				totalPrice,
+				isPaid: false,
+				paymentMethod: 'cod',
+				coupon: coupon.trim(),
+				discount
+			};
+			await createOrder(orderPayload);
+			// 2. Optionally, create invoice as before
+			const items = cart.map(i => ({ product: i._id, name: i.name, price: Number(i.price) || 0, qty: i.qty || 1 }));
+			const shipping = 0;
+			const invoicePayload = {
+				customerName: name,
+				customerEmail: email,
+				items,
+				subtotal,
+				shipping,
+				total: subtotal - discount,
+				paymentMethod: 'cod',
+				paymentStatus: 'pending',
+				coupon: coupon.trim(),
+				discount
+			};
+			const invoice = await createInvoice(invoicePayload);
+			// 3. Clear user cart
+			clearUserCart(user);
+			// 4. Redirect to invoice detail
+			router.push(`/invoices/${invoice._id}`);
+		} catch (err) {
+			console.error('Checkout create COD/order error:', err);
 			alert(err?.message || 'Failed to place order');
 			setSent(false);
 		}
@@ -100,6 +181,21 @@ export default function Checkout() {
 				<div className="checkout-layout">
 					{/* LEFT — FORM */}
 					<div className="checkout-form">
+						{/* Coupon Code */}
+						<form className="mb-3" onSubmit={handleApplyCoupon} autoComplete="off">
+							<label className="form-label">Coupon Code</label>
+							<div className="d-flex gap-2">
+								<input
+									type="text"
+									className="form-control"
+									placeholder="Enter code (e.g. SAVE10)"
+									value={coupon}
+									onChange={e => setCoupon(e.target.value)}
+								/>
+								<button className="btn btn-outline-dark" type="submit">Apply</button>
+							</div>
+							{couponMsg && <div className="small mt-1 text-success">{couponMsg}</div>}
+						</form>
 						<h3>Shipping Details</h3>
 						<div className="form-group">
 							<label>Full Name</label>
@@ -126,9 +222,46 @@ export default function Checkout() {
 							/>
 						</div>
 						<h3 className="mt-4">Payment</h3>
-						<Elements stripe={stripePromise}>
-							<StripeCheckoutForm onPaymentSuccess={handleStripePayment} disabled={!name || !email || !address} />
-						</Elements>
+						<div className="mb-3">
+							<div className="form-check">
+								<input
+									className="form-check-input"
+									type="radio"
+									name="paymentType"
+									id="payStripe"
+									value="stripe"
+									checked={paymentType === 'stripe'}
+									onChange={() => setPaymentType('stripe')}
+								/>
+								<label className="form-check-label" htmlFor="payStripe">
+									Pay with Card (Stripe)
+								</label>
+							</div>
+							<div className="form-check">
+								<input
+									className="form-check-input"
+									type="radio"
+									name="paymentType"
+									id="payCOD"
+									value="cod"
+									checked={paymentType === 'cod'}
+									onChange={() => setPaymentType('cod')}
+								/>
+								<label className="form-check-label" htmlFor="payCOD">
+									Cash on Delivery (COD)
+								</label>
+							</div>
+						</div>
+						{paymentType === 'stripe' && (
+							<Elements stripe={stripePromise}>
+								<StripeCheckoutForm onPaymentSuccess={handleStripePayment} disabled={!name || !email || !address} />
+							</Elements>
+						)}
+						{paymentType === 'cod' && (
+							<button className="btn btn-dark w-100 mt-2" onClick={handleCOD} disabled={!name || !email || !address || sent}>
+								Place Order (COD)
+							</button>
+						)}
 					</div>
 					{/* RIGHT — ORDER SUMMARY */}
 					<div className="checkout-summary">

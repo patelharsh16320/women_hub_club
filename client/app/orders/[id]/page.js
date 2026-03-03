@@ -31,10 +31,17 @@ useEffect(() => {
   if (loading) return <div className="container py-5">Loading...</div>;
   if (!order) return <div className="container py-5">Order not found</div>;
 
-  const items =
-    order.items?.length > 0
-      ? order.items
-      : order.orderItems || [];
+
+  // Support both 'items' and 'orderItems' for compatibility
+  const items = order.items && order.items.length > 0
+    ? order.items
+    : order.orderItems && order.orderItems.length > 0
+    ? order.orderItems.map(i => ({
+        ...i,
+        name: i.product?.name || i.product?._id || i.product || 'Product',
+        price: i.product?.price || i.price || 0
+      }))
+    : [];
 
 return (
   <div className="container py-5">
@@ -79,6 +86,7 @@ return (
         </div>
 
         {/* Items Table */}
+
         <div className="table-responsive">
           <table className="table align-middle">
             <thead className="table-light">
@@ -90,9 +98,9 @@ return (
               </tr>
             </thead>
             <tbody>
-              {order.items.map((item, index) => (
+              {items.map((item, index) => (
                 <tr key={index}>
-                  <td>{item.product}</td>
+                  <td>{item.name || item.product?.name || item.product?._id || item.product || 'Product'}</td>
                   <td>{item.qty}</td>
                   <td>₹ {item.price}</td>
                   <td className="text-end">
@@ -104,10 +112,11 @@ return (
           </table>
         </div>
 
+
         {/* Grand Total */}
         <div className="text-end mt-4">
           <h5 className="fw-bold text-dark">
-            Grand Total: ₹ {order.total}
+            Grand Total: ₹ {order.total || order.totalPrice || 0}
           </h5>
         </div>
 

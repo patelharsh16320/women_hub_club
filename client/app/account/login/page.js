@@ -26,6 +26,7 @@ export default function LoginPage() {
       const userData = {
         name: response.user?.name || response.name,
         email: response.user?.email || response.email,
+        _id: response.user?._id || response._id // ensure user id is stored
       };
 
       localStorage.setItem("user", JSON.stringify(userData));

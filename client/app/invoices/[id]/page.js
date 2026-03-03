@@ -21,8 +21,8 @@ export default async function InvoiceDetailPage(props) {
                 {/* HEADER */}
                 <div className="invoice-header">
                     <div>
-                        <h1 className="logo">Your Company</h1>
-                        <p>Ahmedabad, Gujarat</p>
+                        <h1 className="logo">Women Hub</h1>
+                        <p>Maliba Gujarat</p>
                         <p>support@company.com</p>
                     </div>
 
@@ -40,6 +40,7 @@ export default async function InvoiceDetailPage(props) {
                     <h4>Bill To</h4>
                     <p className="customer-name">{invoice.customerName}</p>
                     <p>{invoice.customerEmail}</p>
+                    {/* <p>{invoice.customerAddress}</p> */}
                 </div>
 
                 {/* ITEMS TABLE */}
