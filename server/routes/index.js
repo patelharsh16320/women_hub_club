@@ -1,3 +1,5 @@
+const userDetails = require("../controllers/userDetailsController");
+
 const express = require("express");
 const router = express.Router();
 const upload = require("../middleware/upload");
@@ -34,6 +36,7 @@ router.post("/login", auth.login);
 /* ORDERS */
 router.post("/orders", order.createOrder);
 router.get("/orders", order.getOrders);
+router.get("/orders/:id", order.getOrderById);
 
 /* INVOICES */
 router.post("/invoices", invoice.createInvoice);
@@ -52,4 +55,9 @@ router.post('/auth/signup', user.signup);
 router.post('/auth/login', user.login);
 router.post('/auth/logout', user.logout);
 
+// USER DETAILS (address, payment methods)
+router.get("/user-details/:userId", userDetails.getUserDetails);
+router.post("/user-details/address", userDetails.saveAddress);
+router.post("/user-details/payment", userDetails.addPaymentMethod);
+router.get("/user-details/:userId/payments", userDetails.getPaymentMethods)
 module.exports = router;

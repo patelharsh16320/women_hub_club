@@ -9,7 +9,10 @@ export default function Header() {
 
   const computeCount = () => {
     try {
-      const raw = localStorage.getItem("cart");
+      const userRaw = localStorage.getItem("user");
+      const userObj = userRaw ? JSON.parse(userRaw) : null;
+      const cartKey = userObj && userObj.email ? `cart_${userObj.email}` : "cart";
+      const raw = localStorage.getItem(cartKey);
       const cart = raw ? JSON.parse(raw) : [];
       const total = cart.reduce((s, i) => s + (i.qty || 1), 0);
       setCount(total);
@@ -24,8 +27,11 @@ export default function Header() {
       const parsed = raw ? JSON.parse(raw) : null;
       setUser(parsed);
       console.log("[Header] Current user from localStorage:", parsed);
+      // If user is null (logout), set cart count to 0
+      if (!parsed) setCount(0);
     } catch {
       setUser(null);
+      setCount(0);
       console.log("[Header] No valid user in localStorage");
     }
   };
@@ -43,13 +49,19 @@ export default function Header() {
     }
     // update when localStorage changes in other tabs
     const onStorage = (e) => {
-      if (e.key === "cart") computeCount();
-      if (e.key === "user") computeUser();
+      if (e.key && e.key.startsWith("cart")) computeCount();
+      if (e.key === "user") {
+        computeUser();
+        computeCount();
+      }
     };
     // custom event from AddToCartButton
     const onCartUpdated = () => computeCount();
     // custom event for user login/logout
-    const onUserChanged = () => computeUser();
+    const onUserChanged = () => {
+      computeUser();
+      computeCount();
+    };
     window.addEventListener("storage", onStorage);
     window.addEventListener("cartUpdated", onCartUpdated);
     window.addEventListener("userChanged", onUserChanged);
@@ -61,6 +73,12 @@ export default function Header() {
   }, []);
 
   const handleLogout = () => {
+    // Remove all cart keys (cart, cart_{email}) from localStorage
+    Object.keys(localStorage).forEach((key) => {
+      if (key === "cart" || key.startsWith("cart_")) {
+        localStorage.removeItem(key);
+      }
+    });
     localStorage.removeItem("user");
     window.dispatchEvent(new Event("userChanged"));
   };
@@ -73,9 +91,6 @@ export default function Header() {
           {/* Logo */}
           <Link href="/" className="navbar-brand brand-logo">
             👩‍🦰 Women Hub
-            <span className="brand-tagline d-block">
-              Your trusted platform for women's products
-            </span>
           </Link>
 
           {/* Mobile Toggle */}
@@ -174,6 +189,9 @@ export default function Header() {
                 </ul>
               </li>
 
+              <li className="nav-item">
+                <Link href="/orders" className="nav-link">Orders</Link>
+              </li>
               {/* CART */}
               <li className="nav-item">
                 <Link href="/cart" className="nav-link position-relative">

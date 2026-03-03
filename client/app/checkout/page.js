@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { createInvoice } from '@/services/invoiceService';
+import { getUserById } from '@/services/userService';
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import StripeCheckoutForm from '../components/StripeCheckoutForm';
@@ -23,6 +24,18 @@ export default function Checkout() {
 			router.push('/account/login');
 			return;
 		}
+		// Prefill user details from backend
+		(async () => {
+			try {
+				const userData = await getUserById(user._id);
+				setName(userData.name || '');
+				setEmail(userData.email || '');
+				setAddress(userData.address || '');
+			} catch (e) {
+				setName(user.name || '');
+				setEmail(user.email || '');
+			}
+		})();
 		try {
 			const raw = localStorage.getItem('cart');
 			setCart(raw ? JSON.parse(raw) : []);

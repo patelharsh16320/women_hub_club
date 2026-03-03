@@ -5,20 +5,27 @@ import Link from 'next/link';
 
 import { useRouter } from 'next/navigation';
 
+
 export default function CartPage() {
 	const [cart, setCart] = useState([]);
+	const [user, setUser] = useState(null);
 	const router = useRouter();
+
+	// Helper to get cart key for current user
+	const getCartKey = (userObj) => userObj && userObj.email ? `cart_${userObj.email}` : "cart";
 
 	useEffect(() => {
 		// Require login
-		const user = (() => { try { return JSON.parse(localStorage.getItem('user')); } catch { return null; } })();
-		if (!user) {
+		const userObj = (() => { try { return JSON.parse(localStorage.getItem('user')); } catch { return null; } })();
+		if (!userObj) {
 			router.push('/account/login');
 			return;
 		}
+		setUser(userObj);
 
 		try {
-			const raw = localStorage.getItem('cart');
+			const cartKey = getCartKey(userObj);
+			const raw = localStorage.getItem(cartKey);
 			setCart(raw ? JSON.parse(raw) : []);
 		} catch {
 			setCart([]);
@@ -26,7 +33,8 @@ export default function CartPage() {
 
 		const onCartUpdated = () => {
 			try {
-				const raw = localStorage.getItem('cart');
+				const cartKey = getCartKey(userObj);
+				const raw = localStorage.getItem(cartKey);
 				setCart(raw ? JSON.parse(raw) : []);
 			} catch { setCart([]); }
 		};
@@ -39,6 +47,18 @@ export default function CartPage() {
 			window.removeEventListener('storage', onCartUpdated);
 		};
 	}, [router]);
+
+	function updateCartStorage(newCart) {
+		setCart([...newCart]);
+		try {
+			const cartKey = getCartKey(user);
+			localStorage.setItem(cartKey, JSON.stringify(newCart));
+			// notify other components
+			try { window.dispatchEvent(new CustomEvent('cartUpdated', { detail: { cart: newCart } })); } catch (e) { }
+		} catch (e) {
+			console.error('Failed to update cart storage', e);
+		}
+	}
 
 	const total = cart
 		.reduce((s, item) => s + (item.price || 0) * (item.qty || 1), 0)

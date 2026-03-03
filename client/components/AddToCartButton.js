@@ -15,8 +15,9 @@ export default function AddToCartButton({ product, redirectToCart = true }) {
         window.location.href = '/account/login';
         return;
       }
-      const raw = localStorage.getItem("cart");
-      let cart = raw ? JSON.parse(raw) : [];
+  const cartKey = user && user.email ? `cart_${user.email}` : "cart";
+  const raw = localStorage.getItem(cartKey);
+  let cart = raw ? JSON.parse(raw) : [];
 
       const id = product._id || product.id;
       const existing = cart.find((i) => i._id === id || i.id === id);
@@ -32,7 +33,7 @@ export default function AddToCartButton({ product, redirectToCart = true }) {
         });
       }
 
-      localStorage.setItem("cart", JSON.stringify(cart));
+  localStorage.setItem(cartKey, JSON.stringify(cart));
 
       // notify other components (Header, Cart page) that cart changed
       try {

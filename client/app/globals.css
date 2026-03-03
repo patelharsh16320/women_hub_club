@@ -292,6 +292,10 @@ input:-webkit-autofill,input:-webkit-autofill:focus,input:-webkit-autofill:hover
 .auth-link{color:#111827;font-weight:600;text-decoration:none}
 .auth-link:hover{text-decoration:underline}
 .form-label{color:#000!important;font-weight:500}
+.order-card{background:#fff;border-radius:12px}
+.order-card .card-body{color:#000}
+.order-card .table td,.order-card .table th{vertical-align:middle}
+.order-card .badge{font-size:13px;font-weight:500}
 @keyframes spin{
 to{transform:rotate(360deg)}
 }
