@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { fetchAPI } from "../../../services/api";
+import { fetchAPI } from "../../../../services/api";
 
 export default function ManageProductsPage() {
   const [products, setProducts] = useState([]);
@@ -82,7 +82,7 @@ export default function ManageProductsPage() {
 
               <td className="text-center">
                 <Link
-                  href={`/products/${p._id}/edit`}
+                  href={`/admin/products/${p._id}/edit`}
                   className="btn btn-sm btn-outline-dark me-2"
                 >
                   Edit

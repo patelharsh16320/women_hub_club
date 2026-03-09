@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
-import { fetchAPI } from "../../../../services/api";
+import { fetchAPI } from "../../../../../services/api";
 
 export default function EditProductPage() {
   const p = useParams();
@@ -81,7 +81,7 @@ export default function EditProductPage() {
           }),
         });
       }
-      router.push("/products/manage");
+      router.push("/admin/products/manage");
     } catch (err) {
       console.error("Update error:", err);
       alert("Update failed: " + (err?.message || "Unknown error"));
