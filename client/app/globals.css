@@ -336,3 +336,12 @@ body{background:#fff}
 .create-user-card{padding:24px}
 .edit-user-card{padding:24px}
 }
+.admin-dashboard{background:#fff5f7;min-height:100vh;padding:30px}
+.dashboard-title{font-weight:700;color:#444}
+.stat-card{border-radius:16px;padding:30px;transition:all .3s ease}
+.stat-card:hover{transform:translateY(-4px);box-shadow:0 10px 25px rgba(0,0,0,.05)}
+.stat-users{background:#ffe4ec}
+.stat-products{background:#e8f7ff}
+.stat-categories{background:#fff6e6}
+.stat-number{font-size:40px;font-weight:700}
+.chart-card{background:#fff;padding:30px;border-radius:16px;box-shadow:0 6px 20px rgba(0,0,0,.05)}

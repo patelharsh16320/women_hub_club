@@ -21,7 +21,7 @@ export default function AdminLayout({ children }) {
         className="sidebar bg-light p-4"
         style={{ minWidth: 220, position: "sticky", top: 0, height: "100vh" }}
       >
-        <h3 className="fw-bold mb-4">Admin Menu</h3>
+        {/* <h3 className="fw-bold mb-4">Admin Menu</h3> */}
         <ul className="nav flex-column">
           {adminLinks.map((l) => (
             <li key={l.href} className="nav-item mb-2">
