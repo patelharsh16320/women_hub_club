@@ -15,7 +15,7 @@ export default function AppGuard({ children }) {
     // Admin can access only /admin/* paths
     if (user && user.role === "admin") {
       if (!pathname.startsWith("/admin")) {
-        window.location.href = "/admin/products";
+        window.location.href = "/admin/products/manage";
         return;
       }
       return;

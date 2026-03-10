@@ -1,39 +1,48 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const adminLinks = [
-  { href: "/admin", label: "Admin Dashboard" },
-  { href: "/admin/products", label: "Products" },
-  { href: "/admin/products/create", label: "Create Product" },
-  { href: "/admin/products/manage", label: "Manage Products" },
-  { href: "/admin/categories", label: "Categories" },
-  { href: "/admin/categories/create", label: "Create Category" },
-  { href: "/admin/users", label: "Users" },
-  { href: "/admin/users/create", label: "Create User" },
+  { href: "/admin", label: "Dashboard", icon: "bi-speedometer2" },
+  { href: "/admin/products/manage", label: "All Products", icon: "bi-gear" },
+  { href: "/admin/products/create", label: "Create Product", icon: "bi-plus-square" },  
+  { href: "/admin/categories", label: "Categories", icon: "bi-tags" },
+  { href: "/admin/categories/create", label: "Create Category", icon: "bi-tag" },
+  { href: "/admin/users", label: "Users", icon: "bi-people" },
+  { href: "/admin/users/create", label: "Create User", icon: "bi-person-plus" },
 ];
 
 export default function AdminLayout({ children }) {
+  const pathname = usePathname();
+
   return (
-    <div className="admin-dashboard d-flex" style={{ minHeight: "100vh" }}>
-      {/* Sticky Sidebar */}
-      <aside
-        className="sidebar bg-light p-4"
-        style={{ minWidth: 220, position: "sticky", top: 0, height: "100vh" }}
-      >
-        {/* <h3 className="fw-bold mb-4">Admin Menu</h3> */}
+    <div className="admin-layout d-flex">
+      <aside className="admin-sidebar">
         <ul className="nav flex-column">
           {adminLinks.map((l) => (
-            <li key={l.href} className="nav-item mb-2">
-              <Link href={l.href} className="nav-link">
+            <li key={l.href} className="nav-item">
+              <Link
+                href={l.href}
+                className={`nav-link ${pathname === l.href ? "active" : ""}`}
+              >
+                <i className={`bi ${l.icon}`}></i>
                 {l.label}
               </Link>
             </li>
           ))}
         </ul>
       </aside>
-      {/* Main Content */}
-      <main className="flex-grow-1 p-5">{children}</main>
+
+      <div className="admin-main">
+        {/*  <header className="admin-topbar">
+          <h5>Admin Dashboard</h5>
+        </header> */}
+
+        <main className="admin-content">
+          {children}
+        </main>
+      </div>
     </div>
   );
 }

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { fetchAPI } from "../../../../../services/api";
+import { getCategories } from "@/services/categoryService";
 
 export default function EditProductPage() {
   const p = useParams();
@@ -13,6 +14,7 @@ export default function EditProductPage() {
   const [error, setError] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState("");
+  const [categories, setCategories] = useState([]);
 
   useEffect(() => {
     const load = async () => {
@@ -24,12 +26,15 @@ export default function EditProductPage() {
         setLoading(true);
         // log the full URL we're requesting for easier debugging
         console.log("Fetching product:", process.env.NEXT_PUBLIC_API_URL, `/products/${id}`);
-
-        const p = await fetchAPI(`/products/${id}`);
+        const [p, cats] = await Promise.all([
+          fetchAPI(`/products/${id}`),
+          getCategories()
+        ]);
         if (!p) {
           throw new Error("Product not found");
         }
         setProduct(p);
+        setCategories(Array.isArray(cats) ? cats : cats.categories || []);
         // set preview to resolved image url for current product
         try {
           const apiBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
@@ -44,7 +49,6 @@ export default function EditProductPage() {
       } catch (err) {
         console.error("Load product error:", err);
         setError(err?.message || String(err));
-        // keep the generic alert for immediate user feedback too
         alert("Failed to load product: " + (err?.message || "Unknown error"));
       } finally { setLoading(false); }
     };
@@ -97,50 +101,147 @@ export default function EditProductPage() {
   );
   if (!product) return <p>Loading...</p>;
 
-  return (
-      <div className="edit-product-page container py-5">
-      <h2 className="text-2xl font-bold mb-4">Edit Product</h2>
-      <form onSubmit={handleSubmit} className="edit-product-card">
-        <div>
-          <label className="block text-sm">Name</label>
-          <input className="w-full border px-2 py-1" value={product.name} onChange={(e) => setProduct({ ...product, name: e.target.value })} required />
-        </div>
-        <div>
-          <label className="block text-sm">Image</label>
-          <input type="file" accept="image/*" className="w-full" onChange={(e) => {
-            const file = e.target.files && e.target.files[0];
-            setSelectedFile(file || null);
-            if (file) {
-              setPreviewUrl(URL.createObjectURL(file));
-            }
-          }} />
+ return (
+  <div className="edit-product-page container py-5">
 
-          {previewUrl && (
-            <div className="mt-2">
-              <img src={previewUrl} alt="preview" className="img-fluid" style={{ maxHeight: 200 }} />
-            </div>
-          )}
-        </div>
-        <div>
-          <label className="block text-sm">Description</label>
-          <textarea className="w-full border px-2 py-1" value={product.description} onChange={(e) => setProduct({ ...product, description: e.target.value })} />
-        </div>
-        <div>
-          <label className="block text-sm">Price</label>
-          <input type="number" className="w-full border px-2 py-1" value={product.price} onChange={(e) => setProduct({ ...product, price: e.target.value })} required />
-        </div>
-        <div>
-          <label className="block text-sm">Category</label>
-          <input className="w-full border px-2 py-1" value={product.category} onChange={(e) => setProduct({ ...product, category: e.target.value })} />
-        </div>
-        <div>
-          <label className="block text-sm">Stock</label>
-          <input type="number" className="w-full border px-2 py-1" value={product.countInStock} onChange={(e) => setProduct({ ...product, countInStock: e.target.value })} />
-        </div>
-        <div>
-          <button type="submit" className="btn btn-dark w-full" disabled={loading}>{loading ? "Updating..." : "Update Product"}</button>
-        </div>
-      </form>
+    {/* Header */}
+    <div className="bg-dark text-white p-3 rounded mb-4 d-flex justify-content-between align-items-center">
+      <h4 className="mb-0">Edit Product</h4>
+      <button
+        className="btn btn-light btn-sm"
+        onClick={() => router.push("/admin/products/manage")}
+      >
+        Back
+      </button>
     </div>
-  );
+
+    {/* Card */}
+    <div className="card shadow-sm border-0">
+      <div className="card-body p-4">
+
+        <form onSubmit={handleSubmit}>
+
+          {/* Product Name */}
+          <div className="mb-3">
+            <label className="form-label fw-semibold">Product Name</label>
+            <input
+              type="text"
+              className="form-control"
+              value={product.name}
+              onChange={(e) =>
+                setProduct({ ...product, name: e.target.value })
+              }
+              required
+            />
+          </div>
+
+          {/* Image */}
+          <div className="mb-3">
+            <label className="form-label fw-semibold">Product Image</label>
+            <input
+              type="file"
+              accept="image/*"
+              className="form-control"
+              onChange={(e) => {
+                const file = e.target.files && e.target.files[0];
+                setSelectedFile(file || null);
+                if (file) {
+                  setPreviewUrl(URL.createObjectURL(file));
+                }
+              }}
+            />
+
+            {previewUrl && (
+              <div className="mt-3">
+                <img
+                  src={previewUrl}
+                  alt="preview"
+                  className="img-thumbnail"
+                  style={{ maxHeight: 200 }}
+                />
+              </div>
+            )}
+          </div>
+
+          {/* Description */}
+          <div className="mb-3">
+            <label className="form-label fw-semibold">Description</label>
+            <textarea
+              className="form-control"
+              rows="4"
+              value={product.description}
+              onChange={(e) =>
+                setProduct({ ...product, description: e.target.value })
+              }
+            />
+          </div>
+
+          {/* Price + Category */}
+          <div className="row">
+            <div className="col-md-6 mb-3">
+              <label className="form-label fw-semibold">Price</label>
+              <input
+                type="number"
+                className="form-control"
+                value={product.price}
+                onChange={(e) =>
+                  setProduct({ ...product, price: e.target.value })
+                }
+                required
+              />
+            </div>
+
+            <div className="col-md-6 mb-3">
+              <label className="form-label fw-semibold">Category</label>
+              <select
+                className="form-select"
+                value={product.category}
+                onChange={(e) =>
+                  setProduct({ ...product, category: e.target.value })
+                }
+                required
+              >
+                <option value="">Select Category</option>
+                {categories.map((cat) => (
+                  <option
+                    key={cat._id || cat.id || cat.name}
+                    value={cat.name}
+                  >
+                    {cat.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          {/* Stock */}
+          <div className="mb-4">
+            <label className="form-label fw-semibold">Stock</label>
+            <input
+              type="number"
+              className="form-control"
+              value={product.countInStock}
+              onChange={(e) =>
+                setProduct({ ...product, countInStock: e.target.value })
+              }
+            />
+          </div>
+
+          {/* Submit */}
+          <div className="d-grid">
+            <button
+              type="submit"
+              className="btn btn-dark"
+              disabled={loading}
+            >
+              {loading ? "Updating..." : "Update Product"}
+            </button>
+          </div>
+
+        </form>
+
+      </div>
+    </div>
+  </div>
+);
 }

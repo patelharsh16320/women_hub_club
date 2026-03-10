@@ -345,3 +345,31 @@ body{background:#fff}
 .stat-categories{background:#fff6e6}
 .stat-number{font-size:40px;font-weight:700}
 .chart-card{background:#fff;padding:30px;border-radius:16px;box-shadow:0 6px 20px rgba(0,0,0,.05)}
+.admin-layout{min-height:100vh}
+.admin-sidebar{width:25%;background:#0f0f0f;color:#fff;padding:30px}
+.admin-sidebar .logo{font-weight:700;margin-bottom:20px}
+.admin-sidebar .nav-link{color:#bfbfbf;padding:12px 14px;border-radius:6px;display:flex;gap:10px;align-items:center;margin-bottom:8px;transition:.3s}
+.admin-sidebar .nav-link:hover{background:#1e1e1e;color:#fff}
+.admin-sidebar .nav-link.active{background:#fff;color:#000;font-weight:600}
+.admin-main{width:75%;background:#f6f7fb;display:flex;flex-direction:column}
+.admin-topbar{background:#fff;padding:20px 30px;border-bottom:1px solid #eee}
+.admin-content{padding:30px}
+.admin-products .table th{font-size:14px;text-transform:uppercase;letter-spacing:.5px}
+.admin-products .table td{vertical-align:middle}
+.product-thumb{width:60px;height:60px;object-fit:cover;border-radius:6px;border:1px solid #eee}
+.admin-products .btn-sm{padding:4px 12px}
+.admin-header{background:#111;color:#fff;padding:18px 30px;border-bottom:1px solid #222;border-radius:10px}
+.admin-create-product{background:#f6f7fb;min-height:100vh}
+.product-form{margin:auto;border-radius:10px}
+.product-form .form-control{border-radius:6px}
+.image-preview img{width:120px;height:120px;object-fit:cover;border-radius:6px;border:1px solid #ddd}
+.admin-header{background:#111;color:#fff;padding:18px 30px;border-bottom:1px solid #222}
+.admin-categories{background:#f6f7fb;min-height:100vh}
+.admin-categories .table th{font-size:14px;text-transform:uppercase;letter-spacing:.5px}
+.admin-categories .table td{vertical-align:middle}
+.admin-categories .btn-sm{padding:4px 12px}
+.admin-header{background:#111;color:#fff;padding:18px 30px;border-bottom:1px solid #222}
+.admin-edit-product{background:#f6f7fb;min-height:100vh}
+.product-form{max-width:700px;margin:auto;border-radius:10px}
+.product-form .form-control,.product-form .form-select{border-radius:6px}
+.image-preview img{width:130px;height:130px;object-fit:cover;border-radius:6px;border:1px solid #ddd}

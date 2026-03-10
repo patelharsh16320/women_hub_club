@@ -7,7 +7,7 @@ const USER_ALLOWED = [
   "/", "/about", "/contact", "/products", "/products/", "/products/[id]", "/account/login", "/account/logout", "/account/signup", "/cart", "/orders"
 ];
 const ADMIN_ALLOWED = [
-  "/admin/*", "/admin/products", "/admin/products/create", "/admin/products/manage", "/admin/products/[id]", "/admin/categories", "/admin/categories/create", "/admin/categories/[id]/edit", "/admin/users", "/admin/users/create", "/admin/users/[id]"];
+  "/admin/*","/admin/products/create", "/admin/products/manage", "/admin/products/[id]", "/admin/categories", "/admin/categories/create", "/admin/categories/[id]/edit", "/admin/users", "/admin/users/create", "/admin/users/[id]"];
 
 export default function Header() {
   const [count, setCount] = useState(0);

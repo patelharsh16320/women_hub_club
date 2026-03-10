@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { getCategories } from "@/services/categoryService";
 import { useRouter } from "next/navigation";
+
 
 export default function CreateProduct() {
   const router = useRouter();
-
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -13,11 +14,23 @@ export default function CreateProduct() {
     category: "",
     countInStock: "",
   });
-
   const [image, setImage] = useState(null);
+  const [preview, setPreview] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [categories, setCategories] = useState([]);
 
-  // handle input change
+  useEffect(() => {
+    async function loadCategories() {
+      try {
+        const cats = await getCategories();
+        setCategories(Array.isArray(cats) ? cats : cats.categories || []);
+      } catch {
+        setCategories([]);
+      }
+    }
+    loadCategories();
+  }, []);
+
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -25,137 +38,151 @@ export default function CreateProduct() {
     });
   };
 
-  // submit form
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  setLoading(true);
-
-  try {
-    const data = new FormData();
-
-    Object.keys(formData).forEach((key) => {
-      data.append(key, formData[key]);
-    });
-
-    if (image) {
-      data.append("image", image);
+  const handleImage = (e) => {
+    const file = e.target.files[0];
+    setImage(file);
+    if (file) {
+      setPreview(URL.createObjectURL(file));
     }
+  };
 
-    // Use NEXT_PUBLIC_API_URL (from client/.env.local) or fallback to localhost
-    const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
-
-    const res = await fetch(`${API_URL}/products`, {
-      method: "POST",
-      body: data,
-    });
-
-    if (!res.ok) {
-      const txt = await res.text();
-      throw new Error(txt || "Failed");
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const data = new FormData();
+      Object.keys(formData).forEach((key) => {
+        data.append(key, formData[key]);
+      });
+      if (image) {
+        data.append("image", image);
+      }
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+      const res = await fetch(`${API_URL}/products`, {
+        method: "POST",
+        body: data,
+      });
+      if (!res.ok) throw new Error("Failed");
+      router.replace("/products");
+    } catch (err) {
+      console.error(err);
+      alert("❌ Error creating product");
+    } finally {
+      setLoading(false);
     }
-
-    // read created product
-    const created = await res.json();
-
-    // redirect to products listing (use replace to avoid back navigation to form)
-    router.replace("/products");
-
-  } catch (err) {
-    console.error(err);
-    alert("❌ Error creating product");
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   return (
-    <div className="container py-5">
-      <h2 className="mb-4 text-center">Add New Product</h2>
+    <div className="admin-create-product">
 
-      <form
-        className="card p-4 shadow-sm"
-        onSubmit={handleSubmit}
-      >
-        {/* Name */}
-        <div className="mb-3">
-          <label className="form-label">Product Name</label>
-          <input
-            type="text"
-            name="name"
-            className="form-control"
-            onChange={handleChange}
-            required
-          />
-        </div>
+      {/* Dark Header */}
+      <div className="admin-header">
+        <h4 className="mb-0">Create New Product</h4>
+      </div>
 
-        {/* Description */}
-        <div className="mb-3">
-          <label className="form-label">Description</label>
-          <textarea
-            name="description"
-            className="form-control"
-            rows="3"
-            onChange={handleChange}
-            required
-          />
-        </div>
+      <div className="container py-5">
 
-        {/* Price */}
-        <div className="mb-3">
-          <label className="form-label">Price</label>
-          <input
-            type="number"
-            name="price"
-            className="form-control"
-            onChange={handleChange}
-            required
-          />
-        </div>
-
-        {/* Category */}
-        <div className="mb-3">
-          <label className="form-label">Category</label>
-          <input
-            type="text"
-            name="category"
-            className="form-control"
-            onChange={handleChange}
-            required
-          />
-        </div>
-
-        {/* Stock */}
-        <div className="mb-3">
-          <label className="form-label">Stock</label>
-          <input
-            type="number"
-            name="countInStock"
-            className="form-control"
-            onChange={handleChange}
-            required
-          />
-        </div>
-
-        {/* Image Upload */}
-        <div className="mb-4">
-          <label className="form-label">Product Image</label>
-          <input
-            type="file"
-            className="form-control"
-            accept="image/*"
-            onChange={(e) => setImage(e.target.files[0])}
-            required
-          />
-        </div>
-
-        <button
-          type="submit"
-          className="btn btn-dark w-100"
-          disabled={loading}
+        <form
+          className="card shadow-sm border-0 p-4 product-form"
+          onSubmit={handleSubmit}
         >
-          {loading ? "Creating..." : "Create Product"}
-        </button>
-      </form>
+
+          {/* Name */}
+          <div className="mb-3">
+            <label className="form-label fw-semibold">Product Name</label>
+            <input
+              type="text"
+              name="name"
+              className="form-control"
+              onChange={handleChange}
+              required
+            />
+          </div>
+
+          {/* Description */}
+          <div className="mb-3">
+            <label className="form-label fw-semibold">Description</label>
+            <textarea
+              name="description"
+              rows="3"
+              className="form-control"
+              onChange={handleChange}
+              required
+            />
+          </div>
+
+          {/* Row Inputs */}
+          <div className="row">
+
+            <div className="col-md-4 mb-3">
+              <label className="form-label fw-semibold">Price</label>
+              <input
+                type="number"
+                name="price"
+                className="form-control"
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div className="col-md-4 mb-3">
+              <label className="form-label fw-semibold">Category</label>
+              <select
+                name="category"
+                className="form-control"
+                value={formData.category}
+                onChange={handleChange}
+                required
+              >
+                <option value="">Select Category</option>
+                {categories.map((cat) => (
+                  <option key={cat._id || cat.id || cat.name} value={cat.name}>{cat.name}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="col-md-4 mb-3">
+              <label className="form-label fw-semibold">Stock</label>
+              <input
+                type="number"
+                name="countInStock"
+                className="form-control"
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+          </div>
+
+          {/* Image Upload */}
+          <div className="mb-4">
+            <label className="form-label fw-semibold">Product Image</label>
+
+            <input
+              type="file"
+              className="form-control"
+              accept="image/*"
+              onChange={handleImage}
+              required
+            />
+
+            {preview && (
+              <div className="image-preview mt-3">
+                <img src={preview} alt="preview" />
+              </div>
+            )}
+          </div>
+
+          <button
+            type="submit"
+            className="btn btn-dark w-100 py-2"
+            disabled={loading}
+          >
+            {loading ? "Creating Product..." : "Create Product"}
+          </button>
+
+        </form>
+      </div>
     </div>
   );
 }

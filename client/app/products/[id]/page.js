@@ -12,20 +12,21 @@ function resolveImageUrl(imagePath) {
 }
 
 export default async function ProductDetailPage({ params }) {
-
-  // ✅ Next.js 15 FIX
   const { id } = await params;
-
-  console.log("Fetching product with ID:", id);
-
-  const product = await getProductById(id);
-
+  let product = null;
+  let error = null;
+  try {
+    product = await getProductById(id);
+  } catch (e) {
+    error = e.message || "Invalid product id";
+  }
   const imgSrc = resolveImageUrl(product?.image || "");
 
-  if (!product) {
+  if (error || !product) {
     return (
       <div className="container py-5">
-        <h2 className="text-center">Product not found</h2>
+        <h2 className="text-center text-danger">Product not found</h2>
+        {error && <p className="text-center text-muted">{error}</p>}
       </div>
     );
   }
@@ -35,7 +36,6 @@ export default async function ProductDetailPage({ params }) {
       <div className="card shadow-sm border-0">
         <div className="card-body">
           <div className="row align-items-center">
-
             {/* Product Image */}
             <div className="col-md-6 mb-4 mb-md-0 text-center">
               <img
@@ -45,17 +45,14 @@ export default async function ProductDetailPage({ params }) {
                 style={{ maxHeight: "450px", objectFit: "cover" }}
               />
             </div>
-
             {/* Product Details */}
             <div className="col-md-6">
               <h1 className="fw-bold mb-3">
                 {product.name}
               </h1>
-
               <p className="text-muted mb-4">
                 {product.description}
               </p>
-
               <h3 className="fw-semibold text-dark mb-4">
                 ₹ {product.price}
               </h3>
