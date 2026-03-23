@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { fetchAPI } from "../../../services/api";
+import { toastMessage } from "../../../utils/toastMessage";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -35,9 +36,11 @@ export default function LoginPage() {
       // notify header
       window.dispatchEvent(new Event("userChanged"));
 
-      router.push("/");
+  toastMessage.success("Login successful!");
+  router.push("/");
     } catch (err) {
-      setError(err.message || "Invalid credentials");
+  setError(err.message || "Invalid credentials");
+  toastMessage.error(err.message || "Invalid credentials");
     } finally {
       setLoading(false);
     }

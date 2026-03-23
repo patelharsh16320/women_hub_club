@@ -1,5 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
+
+import { toastMessage } from '../../utils/toastMessage';
 import Link from 'next/link';
 
 
@@ -64,8 +66,13 @@ export default function CartPage() {
 		.reduce((s, item) => s + (item.price || 0) * (item.qty || 1), 0)
 		.toFixed(2);
 
-	return (
-		<div className="cart-container">
+		return (
+			<div className="cart-container">
+				<div className="d-flex justify-content-end mb-3">
+					<Link href="/shop" className="btn btn-outline-dark">
+						Go to Shop
+					</Link>
+				</div>
 			<h1 className="cart-title">Shopping Cart</h1>
 
 			{cart.length === 0 ? (
@@ -124,10 +131,13 @@ export default function CartPage() {
 											<button
 												className="remove-btn"
 												onClick={() => {
-													const newCart = cart.filter(
-														(c) => !(c._id === id || c.id === id)
-													);
-													updateCartStorage(newCart);
+													if (window.confirm("Remove this product from cart?")) {
+														const newCart = cart.filter(
+															(c) => !(c._id === id || c.id === id)
+														);
+														updateCartStorage(newCart);
+														toastMessage.success("Item removed from cart");
+													}
 												}}
 											>
 												Remove

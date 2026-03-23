@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { fetchAPI } from "../../../services/api";
+import { toastMessage } from "../../../utils/toastMessage";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -17,7 +18,7 @@ export default function CategoriesPage() {
       const data = await fetchAPI("/categories");
       setCats(data || []);
     } catch (err) {
-      alert("Failed to load categories");
+  toastMessage.error("Failed to load categories");
     } finally {
       setLoading(false);
     }
@@ -28,7 +29,8 @@ export default function CategoriesPage() {
   }, []);
 
   const handleDelete = async (id) => {
-    if (!confirm("Delete this category?")) return;
+  toastMessage.info("Delete this category?");
+  if (!window.confirm("Delete this category?")) return;
 
     try {
       await fetchAPI(`/categories/${id}`, { method: "DELETE" });
@@ -41,7 +43,7 @@ export default function CategoriesPage() {
         return updated;
       });
     } catch (err) {
-      alert("Delete failed");
+  toastMessage.error("Delete failed");
     }
   };
 

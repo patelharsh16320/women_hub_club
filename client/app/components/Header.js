@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { Navigate } from "react-router-dom";
 
 const USER_ALLOWED = [
   "/", "/about", "/contact", "/products", "/products/", "/products/[id]", "/account/login", "/account/logout", "/account/signup", "/cart", "/orders"
@@ -87,6 +88,7 @@ export default function Header() {
     });
     localStorage.removeItem("user");
     window.dispatchEvent(new Event("userChanged"));
+    // return <Navigate to="/login" replace />;
   };
 
   return (

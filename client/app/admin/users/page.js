@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { fetchAPI } from "../../../services/api";
+import { toastMessage } from "../../../utils/toastMessage";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -29,7 +30,8 @@ export default function UsersListPage() {
   }, []);
 
   const handleDelete = async (id) => {
-    if (!confirm("Are you sure you want to delete this user?")) return;
+  toastMessage.info("Are you sure you want to delete this user?");
+  if (!window.confirm("Are you sure you want to delete this user?")) return;
     try {
       await fetchAPI(`/users/${id}`, { method: "DELETE" });
       setUsers((s) => s.filter((u) => u._id !== id && u.id !== id));
@@ -38,7 +40,7 @@ export default function UsersListPage() {
       const newTotalPages = Math.ceil(newTotal / ITEMS_PER_PAGE);
       if (currentPage > newTotalPages) setCurrentPage(Math.max(1, newTotalPages));
     } catch (err) {
-      alert(err.message || "Delete failed");
+  toastMessage.error(err.message || "Delete failed");
     }
   };
 

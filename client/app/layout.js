@@ -3,6 +3,8 @@ import Footer from '../components/Footer';
 import BootstrapClient from './components/BootstrapClient';
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./globals.css";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import AppGuard from "./components/AppGuard";
 
 export const metadata = {
@@ -20,6 +22,7 @@ export default function RootLayout({ children }) {
           <main className="flex-1">{children}</main>
         </AppGuard>
         <Footer />
+        <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} newestOnTop closeOnClick pauseOnFocusLoss draggable pauseOnHover />
       </body>
     </html>
   );

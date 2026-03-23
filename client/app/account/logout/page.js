@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect } from "react";
+import { toastMessage } from "../../../utils/toastMessage";
 import { useRouter } from "next/navigation";
+import { Navigate } from "react-router-dom";
 
 export default function LogoutPage() {
   const router = useRouter();
@@ -11,9 +13,12 @@ export default function LogoutPage() {
       localStorage.removeItem("user");
       window.dispatchEvent(new Event("userChanged"));
     }
-    // small delay to show message if needed
-    const t = setTimeout(() => router.push("/"), 400);
-    return () => clearTimeout(t);
+  toastMessage.success("Logout successful!");
+     const t = setTimeout(() => {
+       window.location.href = "http://localhost:3000/account/login";
+     }, 400);
+  //   return () => clearTimeout(t);
+    return <Navigate to="/login" replace />;
   }, [router]);
 
   return (

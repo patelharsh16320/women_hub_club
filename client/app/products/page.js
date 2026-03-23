@@ -6,7 +6,7 @@ export default async function ProductsPage() {
 
   return (
     <div className="container py-5">
-      <h1 className="fw-bold mb-4">
+      <h1 className="fw-bold mb-4 text-light">
         All Products
       </h1>
 

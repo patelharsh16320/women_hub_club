@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { fetchAPI } from "../../../../services/api";
+import { toastMessage } from "../../../../utils/toastMessage";
 
 export default function CreateCategoryPage() {
   const router = useRouter();
@@ -16,7 +17,7 @@ export default function CreateCategoryPage() {
       await fetchAPI("/categories", { method: "POST", body: JSON.stringify({ name }) });
       router.push("/admin/categories");
     } catch (err) {
-      alert("Create failed");
+  toastMessage.error("Create failed");
     } finally { setLoading(false); }
   };
 

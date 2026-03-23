@@ -6,7 +6,6 @@ function resolveImageUrl(imagePath) {
   if (!imagePath) return "";
   if (imagePath.startsWith("http://") || imagePath.startsWith("https://")) return imagePath;
 
-  // Prefer NEXT_PUBLIC_API_URL (set in client/.env.local). Fallback to localhost.
   const apiBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
   const apiOrigin = (apiBase || "").replace(/\/api\/?$/i, "");
 
@@ -23,26 +22,23 @@ export default function ProductCard({ product }) {
     <div className="col">
       <div className="card h-100 shadow-sm border-0">
 
-        {/* Product Image */}
-        <img
-          src={imgSrc}
-          className="card-img-top"
-          alt={product.name}
-          style={{ height: "250px", objectFit: "cover" }}
-        />
-
-        <div className="card-body d-flex flex-column">
-          <h5 className="card-title">{product.name}</h5>
-
-          <p className="card-text text-muted small">
-            {product.description}
-          </p>
-
+        <Link href={`/products/${product._id}`}>
+          <img
+            src={imgSrc}
+            className="card-img-top"
+            alt={product.name}
+            style={{ height: "250px", objectFit: "cover" }}
+          />
+        </Link>
+        <div className="card-body d-flex flex-column bg-light">
+          <Link href={`/products/${product._id}`}>
+            <h5 className="card-title text-dark">{product.name}</h5>
+          </Link>
           <h6 className="fw-bold text-dark">
             ₹ {product.price}
           </h6>
 
-          <p className="mb-1">
+          <p className="mb-1 text-dark">
             ⭐ {product.rating} ({product.numReviews} reviews)
           </p>
 

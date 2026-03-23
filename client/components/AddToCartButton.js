@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { toastMessage } from "../utils/toastMessage";
 import { useRouter } from "next/navigation";
 
 export default function AddToCartButton({ product, redirectToCart = true }) {
@@ -40,12 +41,13 @@ export default function AddToCartButton({ product, redirectToCart = true }) {
         window.dispatchEvent(new CustomEvent("cartUpdated", { detail: { cart } }));
       } catch (e) {}
 
+      toastMessage.success("Added to cart!");
       if (redirectToCart) {
         router.push("/cart");
       }
     } catch (err) {
       console.error("Add to cart error:", err);
-      alert("Could not add to cart");
+      toastMessage.error("Could not add to cart");
     } finally {
       setAdding(false);
     }

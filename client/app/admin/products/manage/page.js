@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { fetchAPI } from "../../../../services/api";
+import { toastMessage } from "../../../../utils/toastMessage";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -18,7 +19,7 @@ export default function ManageProductsPage() {
       setProducts(data || []);
     } catch (err) {
       console.error(err);
-      alert("Failed to load products");
+  toastMessage.error("Failed to load products");
     } finally {
       setLoading(false);
     }
@@ -27,7 +28,8 @@ export default function ManageProductsPage() {
   useEffect(() => { load(); }, []);
 
   const handleDelete = async (id) => {
-    if (!confirm("Delete this product?")) return;
+  toastMessage.info("Delete this product?");
+  if (!window.confirm("Delete this product?")) return;
 
     try {
       await fetchAPI(`/products/${id}`, { method: "DELETE" });
@@ -41,7 +43,7 @@ export default function ManageProductsPage() {
         return updated;
       });
     } catch (err) {
-      alert("Delete failed");
+  toastMessage.error("Delete failed");
     }
   };
 
