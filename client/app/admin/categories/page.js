@@ -4,9 +4,12 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { fetchAPI } from "../../../services/api";
 
+const ITEMS_PER_PAGE = 10;
+
 export default function CategoriesPage() {
   const [cats, setCats] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const load = async () => {
     try {
@@ -29,10 +32,48 @@ export default function CategoriesPage() {
 
     try {
       await fetchAPI(`/categories/${id}`, { method: "DELETE" });
-      setCats((s) => s.filter((c) => c._id !== id));
+      setCats((s) => {
+        const updated = s.filter((c) => c._id !== id);
+        const totalPages = Math.ceil(updated.length / ITEMS_PER_PAGE);
+        if (currentPage > totalPages && totalPages > 0) {
+          setCurrentPage(totalPages);
+        }
+        return updated;
+      });
     } catch (err) {
       alert("Delete failed");
     }
+  };
+
+  // Pagination calculations
+  const totalPages = Math.ceil(cats.length / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const endIndex = startIndex + ITEMS_PER_PAGE;
+  const paginatedCats = cats.slice(startIndex, endIndex);
+
+  const handlePageChange = (page) => {
+    if (page < 1 || page > totalPages) return;
+    setCurrentPage(page);
+  };
+
+  const getPageNumbers = () => {
+    const pages = [];
+    if (totalPages <= 7) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i);
+    } else {
+      pages.push(1);
+      if (currentPage > 3) pages.push("...");
+      for (
+        let i = Math.max(2, currentPage - 1);
+        i <= Math.min(totalPages - 1, currentPage + 1);
+        i++
+      ) {
+        pages.push(i);
+      }
+      if (currentPage < totalPages - 2) pages.push("...");
+      pages.push(totalPages);
+    }
+    return pages;
   };
 
   return (
@@ -55,10 +96,7 @@ export default function CategoriesPage() {
             </p>
           </div>
 
-          <Link
-            href="/admin/categories/create"
-            className="btn btn-dark px-4"
-          >
+          <Link href="/admin/categories/create" className="btn btn-dark px-4">
             + Create Category
           </Link>
 
@@ -75,7 +113,7 @@ export default function CategoriesPage() {
 
               <thead className="table-light">
                 <tr>
-                  <th style={{width:"80px"}}>#</th>
+                  <th style={{ width: "80px" }}>#</th>
                   <th>Name</th>
                   <th className="text-center">Actions</th>
                 </tr>
@@ -83,11 +121,11 @@ export default function CategoriesPage() {
 
               <tbody>
 
-                {cats.map((c, index) => (
+                {paginatedCats.map((c, index) => (
                   <tr key={c._id}>
 
                     <td className="fw-semibold">
-                      {index + 1}
+                      {startIndex + index + 1}
                     </td>
 
                     <td className="fw-medium">
@@ -128,6 +166,67 @@ export default function CategoriesPage() {
             </table>
 
           </div>
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="d-flex justify-content-between align-items-center px-3 py-3 border-top">
+
+              <p className="text-muted mb-0" style={{ fontSize: "14px" }}>
+                Showing <strong>{startIndex + 1}</strong>–<strong>{Math.min(endIndex, cats.length)}</strong> of <strong>{cats.length}</strong> categories
+              </p>
+
+              <nav>
+                <ul className="pagination pagination-sm mb-0">
+
+                  {/* Previous */}
+                  <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+                    <button
+                      className="page-link"
+                      onClick={() => handlePageChange(currentPage - 1)}
+                      disabled={currentPage === 1}
+                    >
+                      &laquo;
+                    </button>
+                  </li>
+
+                  {/* Page Numbers */}
+                  {getPageNumbers().map((page, i) =>
+                    page === "..." ? (
+                      <li key={`ellipsis-${i}`} className="page-item disabled">
+                        <span className="page-link">…</span>
+                      </li>
+                    ) : (
+                      <li
+                        key={page}
+                        className={`page-item ${currentPage === page ? "active" : ""}`}
+                      >
+                        <button
+                          className="page-link"
+                          onClick={() => handlePageChange(page)}
+                          style={currentPage === page ? { backgroundColor: "#212529", borderColor: "#212529" } : {}}
+                        >
+                          {page}
+                        </button>
+                      </li>
+                    )
+                  )}
+
+                  {/* Next */}
+                  <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+                    <button
+                      className="page-link"
+                      onClick={() => handlePageChange(currentPage + 1)}
+                      disabled={currentPage === totalPages}
+                    >
+                      &raquo;
+                    </button>
+                  </li>
+
+                </ul>
+              </nav>
+
+            </div>
+          )}
 
         </div>
 

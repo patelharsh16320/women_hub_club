@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { fetchAPI } from "../../../services/api";
+import { fetchAPI } from "../../../../services/api";
 import Link from "next/link";
 
 export default function CreateUserPage() {

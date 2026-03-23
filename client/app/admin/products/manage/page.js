@@ -4,9 +4,12 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { fetchAPI } from "../../../../services/api";
 
+const ITEMS_PER_PAGE = 10;
+
 export default function ManageProductsPage() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const load = async () => {
     try {
@@ -28,10 +31,50 @@ export default function ManageProductsPage() {
 
     try {
       await fetchAPI(`/products/${id}`, { method: "DELETE" });
-      setProducts((s) => s.filter((p) => p._id !== id));
+      setProducts((s) => {
+        const updated = s.filter((p) => p._id !== id);
+        // Adjust page if the current page becomes empty after deletion
+        const totalPages = Math.ceil(updated.length / ITEMS_PER_PAGE);
+        if (currentPage > totalPages && totalPages > 0) {
+          setCurrentPage(totalPages);
+        }
+        return updated;
+      });
     } catch (err) {
       alert("Delete failed");
     }
+  };
+
+  // Pagination calculations
+  const totalPages = Math.ceil(products.length / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const endIndex = startIndex + ITEMS_PER_PAGE;
+  const paginatedProducts = products.slice(startIndex, endIndex);
+
+  const handlePageChange = (page) => {
+    if (page < 1 || page > totalPages) return;
+    setCurrentPage(page);
+  };
+
+  // Build page number array with ellipsis logic
+  const getPageNumbers = () => {
+    const pages = [];
+    if (totalPages <= 7) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i);
+    } else {
+      pages.push(1);
+      if (currentPage > 3) pages.push("...");
+      for (
+        let i = Math.max(2, currentPage - 1);
+        i <= Math.min(totalPages - 1, currentPage + 1);
+        i++
+      ) {
+        pages.push(i);
+      }
+      if (currentPage < totalPages - 2) pages.push("...");
+      pages.push(totalPages);
+    }
+    return pages;
   };
 
   return (
@@ -64,7 +107,7 @@ export default function ManageProductsPage() {
 
             <thead className="table-light">
               <tr>
-                <th style={{width:"60px"}}>#</th>
+                <th style={{ width: "60px" }}>#</th>
                 <th>Name</th>
                 <th>Image</th>
                 <th>Price</th>
@@ -75,7 +118,7 @@ export default function ManageProductsPage() {
 
             <tbody>
 
-              {products.map((p, index) => {
+              {paginatedProducts.map((p, index) => {
 
                 const apiBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
                 const apiOrigin = (apiBase || "").replace(/\/?api\/?$/i, "");
@@ -84,10 +127,13 @@ export default function ManageProductsPage() {
                 if (imgSrc.startsWith("/uploads")) imgSrc = `${apiOrigin}${imgSrc}`;
                 if (imgSrc.startsWith("uploads")) imgSrc = `${apiOrigin}/${imgSrc}`;
 
+                // Global index across all pages
+                const globalIndex = startIndex + index + 1;
+
                 return (
                   <tr key={p._id}>
 
-                    <td className="fw-semibold">{index + 1}</td>
+                    <td className="fw-semibold">{globalIndex}</td>
 
                     <td className="fw-medium">{p.name}</td>
 
@@ -146,6 +192,68 @@ export default function ManageProductsPage() {
           </table>
 
         </div>
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="d-flex justify-content-between align-items-center px-3 py-3 border-top">
+
+            <p className="text-muted mb-0" style={{ fontSize: "14px" }}>
+              Showing <strong>{startIndex + 1}</strong>–<strong>{Math.min(endIndex, products.length)}</strong> of <strong>{products.length}</strong> products
+            </p>
+
+            <nav>
+              <ul className="pagination pagination-sm mb-0">
+
+                {/* Previous Button */}
+                <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+                  <button
+                    className="page-link"
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    disabled={currentPage === 1}
+                  >
+                    &laquo;
+                  </button>
+                </li>
+
+                {/* Page Numbers */}
+                {getPageNumbers().map((page, i) =>
+                  page === "..." ? (
+                    <li key={`ellipsis-${i}`} className="page-item disabled">
+                      <span className="page-link">…</span>
+                    </li>
+                  ) : (
+                    <li
+                      key={page}
+                      className={`page-item ${currentPage === page ? "active" : ""}`}
+                    >
+                      <button
+                        className="page-link"
+                        onClick={() => handlePageChange(page)}
+                        style={currentPage === page ? { backgroundColor: "#212529", borderColor: "#212529" } : {}}
+                      >
+                        {page}
+                      </button>
+                    </li>
+                  )
+                )}
+
+                {/* Next Button */}
+                <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+                  <button
+                    className="page-link"
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                  >
+                    &raquo;
+                  </button>
+                </li>
+
+              </ul>
+            </nav>
+
+          </div>
+        )}
+
       </div>
     </div>
   );

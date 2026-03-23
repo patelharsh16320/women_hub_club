@@ -11,11 +11,13 @@ export default function StripeCheckoutForm({ onPaymentSuccess, disabled }) {
     e.preventDefault();
     setError(null);
     setProcessing(true);
+
     if (!stripe || !elements) {
       setError('Stripe not loaded');
       setProcessing(false);
       return;
     }
+
     // Simulate payment in test mode
     setTimeout(() => {
       setProcessing(false);
@@ -31,7 +33,11 @@ export default function StripeCheckoutForm({ onPaymentSuccess, disabled }) {
     <form onSubmit={handleSubmit} style={{ marginTop: 16 }}>
       <CardElement options={{ hidePostalCode: true }} />
       {error && <div className="text-danger small mt-2">{error}</div>}
-      <button type="submit" className="btn btn-dark mt-3" disabled={!stripe || processing || disabled}>
+      <button
+        type="submit"
+        className="btn btn-dark w-100 mt-3"
+        disabled={disabled || !stripe || !elements || processing}
+      >
         {processing ? 'Processing...' : 'Pay with Stripe'}
       </button>
     </form>
