@@ -15,6 +15,7 @@ export default function CreateProduct() {
     sellPrice: "",
     category: "",
     countInStock: "",
+    role: "user",
   });
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);
@@ -35,41 +36,10 @@ export default function CreateProduct() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    if (name === "price") {
-      // Price must be > 0, and sellPrice must be less than price
-      const newPrice = value <= 0 ? 1 : value;
-      setFormData((prev) => ({
-        ...prev,
-        price: newPrice,
-        sellPrice:
-          prev.sellPrice !== "" && Number(prev.sellPrice) >= Number(newPrice)
-            ? ""
-            : prev.sellPrice,
-      }));
-    } else if (name === "sellPrice") {
-      // Sell price must be >= 0 and less than price
-      setFormData((prev) => ({
-        ...prev,
-        sellPrice:
-          value < 0
-            ? 0
-            : Number(value) >= Number(prev.price)
-            ? prev.price > 1
-              ? prev.price - 1
-              : 0
-            : value,
-      }));
-    } else if (name === "countInStock") {
-      setFormData({
-        ...formData,
-        countInStock: value < 1 ? 1 : value,
-      });
-    } else {
-      setFormData({
-        ...formData,
-        [name]: value,
-      });
-    }
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
   };
 
   const handleImage = (e) => {
@@ -227,6 +197,23 @@ export default function CreateProduct() {
                 <img src={preview} alt="preview" />
               </div>
             )}
+          </div>
+
+          {/* Role Selection */}
+          <div className="mb-3">
+            <label className="form-label-light fw-semibold">Role</label>
+            <select
+              name="role"
+              className="form-control"
+              value={formData.role}
+              onChange={handleChange}
+              required
+            >
+              <option value="admin">Admin</option>
+              <option value="editor">Editor</option>
+              <option value="author">Author</option>
+              <option value="user">User</option>
+            </select>
           </div>
 
           <button

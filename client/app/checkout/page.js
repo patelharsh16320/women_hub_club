@@ -188,7 +188,7 @@ export default function Checkout() {
 					coupon: coupon.trim(),
 					discount: validDiscount
 				};
-				await createInvoice(invoicePayload);
+				const invoice = await createInvoice(invoicePayload);
 				clearUserCart(user._id);
 				setSent(false);
 				toastMessage.success('Order placed successfully!');

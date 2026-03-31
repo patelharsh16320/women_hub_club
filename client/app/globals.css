@@ -487,3 +487,7 @@ button:hover {
 .card:hover::after {
   width: 100%;
 }
+.form-label-light{
+  color: #fff;
+  margin-bottom: 10px;
+}

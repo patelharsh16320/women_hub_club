@@ -66,6 +66,13 @@ export default function EditUserClient({ id: propId }) {
   return (
     <div className="edit-user-page container py-5">
       <h2 className="text-2xl font-bold mb-4">Edit User</h2>
+      <button
+        type="button"
+        className="btn btn-secondary mb-3"
+        onClick={() => router.back()}
+      >
+        &larr; Back
+      </button>
       <form onSubmit={handleSubmit} className="edit-user-card">
         <div className="mb-3">
           <label className="block text-sm">Name</label>
@@ -77,11 +84,26 @@ export default function EditUserClient({ id: propId }) {
         </div>
         <div>
           <label className="block text-sm">Password</label>
-          <input type="password" className="w-full border px-2 py-1" value={user.password || ""} onChange={(e) => setUser({ ...user, password: e.target.value })} />
+          <input
+            type="text"
+            className="w-full border px-2 py-1"
+            value={user.password || ""}
+            onChange={(e) => setUser({ ...user, password: e.target.value })}
+          />
         </div>
         <div>
           <label className="block text-sm">Role</label>
-          <input className="w-full border px-2 py-1" value={user.role || "user"} onChange={(e) => setUser({ ...user, role: e.target.value })} />
+          <select
+            className="w-full border px-2 py-1"
+            value={user.role || "user"}
+            onChange={(e) => setUser({ ...user, role: e.target.value })}
+            required
+          >
+            <option value="admin">Admin</option>
+            <option value="editor">Editor</option>
+            <option value="author">Author</option>
+            <option value="user">User</option>
+          </select>
         </div>
         <div>
           <button type="submit" className="btn btn-dark w-full" disabled={loading}>

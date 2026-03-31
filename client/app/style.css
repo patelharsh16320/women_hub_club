@@ -228,7 +228,9 @@
   background: #ff4d6d;
   transform: translateY(-1px);
 }
-
+.admin-create-product  label {
+  color: #fff !important;
+}
 /* ===============================
    MOBILE
 =================================*/

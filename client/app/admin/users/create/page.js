@@ -10,6 +10,7 @@ export default function CreateUserPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [role, setRole] = useState("user"); // default value is lowercase
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -20,7 +21,7 @@ export default function CreateUserPage() {
     try {
       const user = await fetchAPI("/users", {
         method: "POST",
-        body: JSON.stringify({ name, email, password, role: "user" }),
+        body: JSON.stringify({ name, email, password, role }),
       });
       router.push("/admin/users");
     } catch (err) {
@@ -49,6 +50,21 @@ export default function CreateUserPage() {
         <div>
           <label className="block text-sm">Password</label>
           <input type="password" className="w-full border px-2 py-1" value={password} onChange={(e) => setPassword(e.target.value)} required />
+        </div>
+        <div className="mb-3">
+          <label className="form-label-light fw-semibold">Role</label>
+          <select
+            name="role"
+            className="form-control"
+            value={role}
+            onChange={(e) => setRole(e.target.value)}
+            required
+          >
+            <option value="admin">Admin</option>
+            <option value="editor">Editor</option>
+            <option value="author">Author</option>
+            <option value="user">User</option>
+          </select>
         </div>
         <div>
           <button type="submit" className="btn btn-dark w-full" disabled={loading}>

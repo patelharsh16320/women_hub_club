@@ -18,6 +18,12 @@ function resolveImageUrl(imagePath) {
 export default function ProductCard({ product }) {
   const imgSrc = resolveImageUrl(product?.image || "");
 
+  const hasDiscount =
+    product.sellPrice !== undefined &&
+    product.sellPrice !== null &&
+    product.sellPrice !== "" &&
+    Number(product.sellPrice) < Number(product.price);
+
   return (
     <div className="col">
       <div className="card h-100 shadow-sm border-0">
@@ -35,7 +41,18 @@ export default function ProductCard({ product }) {
             <h5 className="card-title text-dark">{product.name}</h5>
           </Link>
           <h6 className="fw-bold text-dark">
-            ₹ {product.price}
+            {hasDiscount ? (
+              <>
+                <span style={{ textDecoration: "line-through", color: "#888", marginRight: 8 }}>
+                  ₹ {product.price}
+                </span>
+                <span style={{ color: "#d32f2f" }}>
+                  ₹ {product.sellPrice}
+                </span>
+              </>
+            ) : (
+              <>₹ {product.price}</>
+            )}
           </h6>
 
           <p className="mb-1 text-dark">

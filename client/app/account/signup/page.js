@@ -11,6 +11,7 @@ export default function SignupPage() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const submit = async (e) => {
     e.preventDefault();
@@ -43,7 +44,6 @@ export default function SignupPage() {
         {error && <div className="signup-error">{error}</div>}
 
         <form onSubmit={submit} className="signup-form">
-
           <div className="form-group">
             <label>Name</label>
             <input
@@ -64,14 +64,32 @@ export default function SignupPage() {
             />
           </div>
 
-          <div className="form-group">
-            <label>Password</label>
+          <div className="mb-3" style={{ position: "relative" }}>
+            <label className="form-label">Password</label>
             <input
-              type="password"
+              type={showPassword ? "text" : "password"}
+              className="form-control custom-input"
+              placeholder="Enter your password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
             />
+            <button
+              type="button"
+              onClick={() => setShowPassword((v) => !v)}
+              style={{
+                position: "absolute",
+                right: 10,
+                top: 35,
+                background: "none",
+                border: "none",
+                padding: 0,
+                cursor: "pointer",
+              }}
+              tabIndex={-1}
+            >
+              {showPassword ? "🙈" : "👁️"}
+            </button>
           </div>
 
           <button type="submit" disabled={loading} className="signup-btn">

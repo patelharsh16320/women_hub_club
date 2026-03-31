@@ -22,8 +22,8 @@ export default async function InvoiceDetailPage(props) {
                 <div className="invoice-header">
                     <div>
                         <h1 className="logo">Women Hub</h1>
-                        <p>Maliba Gujarat</p>
-                        <p>support@company.com</p>
+                        <p>Maliba, Bardoli, India</p>
+                        <p>support@gmail.com</p>
                     </div>
 
                     <div className="invoice-meta">
