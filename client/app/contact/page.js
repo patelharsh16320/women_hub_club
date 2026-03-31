@@ -31,12 +31,12 @@ export default function Contact() {
 
           <div className="info-block">
             <h4>Email</h4>
-            <p>support@yourcompany.com</p>
+            <p>support@gmail.com</p>
           </div>
 
           <div className="info-block">
             <h4>Location</h4>
-            <p>Ahmedabad, Gujarat, India</p>
+            <p>Maliba, Bardoli, India</p>
           </div>
         </div>
 

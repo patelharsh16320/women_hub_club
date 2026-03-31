@@ -69,11 +69,11 @@ export default function CartPage() {
 		return (
 			<div className="cart-container">
 				<div className="d-flex justify-content-end mb-3">
-					<Link href="/shop" className="btn btn-outline-dark">
+					<Link href="/shop" className="btn btn-outline-dark text-light border border-light">
 						Go to Shop
 					</Link>
 				</div>
-			<h1 className="cart-title">Shopping Cart</h1>
+			<h1 className="cart-title text-light">Shopping Cart</h1>
 
 			{cart.length === 0 ? (
 				<div className="cart-empty">

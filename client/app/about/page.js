@@ -54,7 +54,7 @@ export default function About() {
 					<section className="about-section contact-section">
 						<h2>Contact Us</h2>
 						<p>Email: support@womenhub.com</p>
-						<p>Location: Ahmedabad, Gujarat, India</p>
+						<p>Location: Maliba, Bardoli, India</p>
 					</section>
 
 				</div>
