@@ -75,9 +75,6 @@ export default function UsersListPage() {
     <div className="users-page container py-5">
       <div className="users-header">
         <h1 className="text-2xl font-bold text-dark">Users</h1>
-        <Link href="/admin/users/create" className="btn btn-dark create-btn">
-          + Create User
-        </Link>
       </div>
 
       {loading && <p>Loading...</p>}

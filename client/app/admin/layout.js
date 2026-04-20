@@ -10,7 +10,8 @@ const adminLinks = [
   { href: "/admin/categories", label: "Categories", icon: "bi-tags" },
   { href: "/admin/categories/create", label: "Create Category", icon: "bi-tag" },
   { href: "/admin/users", label: "Users", icon: "bi-people" },
-  { href: "/admin/users/create", label: "Create User", icon: "bi-person-plus" },
+  { href: "/admin/orders", label: "Orders", icon: "bi-receipt" },
+  // Create User intentionally hidden from frontend UI
 ];
 
 export default function AdminLayout({ children }) {

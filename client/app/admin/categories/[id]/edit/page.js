@@ -11,6 +11,7 @@ export default function EditCategoryPage() {
   const [cat, setCat] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [parents, setParents] = useState([]);
 
   useEffect(() => {
     const load = async () => {
@@ -21,7 +22,12 @@ export default function EditCategoryPage() {
       try {
         setLoading(true);
         const data = await fetchAPI(`/categories/${id}`);
+        // API returns category with children field
         setCat(data);
+        // load possible parents (exclude this category)
+        const all = await fetchAPI("/categories");
+        const parentOptions = Array.isArray(all) ? all.filter((c) => c._id !== id) : [];
+        setParents(parentOptions.filter((c) => !c.parent));
       } catch (err) {
         setError(err?.message || "Failed to load category");
       } finally { setLoading(false); }
@@ -33,7 +39,7 @@ export default function EditCategoryPage() {
     e.preventDefault();
     try {
       setLoading(true);
-      await fetchAPI(`/categories/${id}`, { method: "POST", body: JSON.stringify({ name: cat.name }) });
+      await fetchAPI(`/categories/${id}`, { method: "POST", body: JSON.stringify({ name: cat.name, parent: cat.parent?._id || cat.parent || null }) });
       router.push("/admin/categories");
     } catch (err) {
       setError(err?.message || "Update failed");
@@ -57,6 +63,15 @@ export default function EditCategoryPage() {
         <div>
           <label className="block text-sm">Name</label>
           <input className="w-full border px-2 py-1" value={cat.name} onChange={(e) => setCat({ ...cat, name: e.target.value })} required />
+        </div>
+        <div className="mb-3 mt-3">
+          <label className="block text-sm">Parent Category (optional)</label>
+          <select className="w-full border px-2 py-1" value={cat.parent?._id || cat.parent || ""} onChange={(e) => setCat({ ...cat, parent: e.target.value || null })}>
+            <option value="">-- None --</option>
+            {parents.map(p => (
+              <option key={p._id} value={p._id}>{p.name}</option>
+            ))}
+          </select>
         </div>
         <div>
           <button type="submit" className="btn btn-dark w-full" disabled={loading}>{loading ? "Updating..." : "Update"}</button>

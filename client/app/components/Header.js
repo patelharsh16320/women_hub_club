@@ -8,7 +8,7 @@ const USER_ALLOWED = [
   "/", "/about", "/contact", "/products", "/products/", "/products/[id]", "/account/login", "/account/logout", "/account/signup", "/cart", "/orders"
 ];
 const ADMIN_ALLOWED = [
-  "/admin/*","/admin/products/create", "/admin/products/manage", "/admin/products/[id]", "/admin/categories", "/admin/categories/create", "/admin/categories/[id]/edit", "/admin/users", "/admin/users/create", "/admin/users/[id]"];
+  "/admin/*", "/admin/products/create", "/admin/products/manage", "/admin/products/[id]", "/admin/categories", "/admin/categories/create", "/admin/categories/[id]/edit", "/admin/users", "/admin/users/[id]"];
 
 export default function Header() {
   const [count, setCount] = useState(0);
@@ -174,18 +174,15 @@ export default function Header() {
                     </a>
                     <ul className="dropdown-menu">
                       <li>
-                        <Link href="/admin/users/create" className="dropdown-item">
-                          Create User
-                        </Link>
-                      </li>
-                      <li>
                         <Link href="/admin/users" className="dropdown-item">
                           Manage Users
                         </Link>
                       </li>
                     </ul>
                   </li>
-
+                 <Link href="/admin/orders" className="dropdown-item">
+                          All Orders
+                        </Link>
                   {/* Admin Name */}
                   <li className="nav-item ms-lg-2">
                     <span className="nav-link fw-bold text-primary">

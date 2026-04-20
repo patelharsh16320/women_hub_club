@@ -15,6 +15,8 @@ export default function EditProductPage() {
   const [selectedFile, setSelectedFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState("");
   const [categories, setCategories] = useState([]);
+  const [parents, setParents] = useState([]);
+  const [subcategories, setSubcategories] = useState([]);
 
   useEffect(() => {
     const load = async () => {
@@ -34,7 +36,31 @@ export default function EditProductPage() {
           throw new Error("Product not found");
         }
         setProduct(p);
-        setCategories(Array.isArray(cats) ? cats : cats.categories || []);
+        const allCats = Array.isArray(cats) ? cats : cats.categories || [];
+        setCategories(allCats);
+        const top = allCats.filter((c) => !c.parent);
+        setParents(top);
+        // Determine selected parent & subcategory based on product.category
+        try {
+          const prodCat = p?.category;
+          // find matching category by id or name
+          const matched = allCats.find(
+            (c) => c._id === prodCat || c._id === (prodCat?._id) || c.name === prodCat
+          );
+          if (matched) {
+            if (matched.parent) {
+              const parentId = matched.parent._id || matched.parent;
+              setSubcategories(allCats.filter((c) => (c.parent && (c.parent._id === parentId || c.parent === parentId))));
+              setProduct((prev) => ({ ...prev, parentCategory: parentId, category: matched._id }));
+            } else {
+              // product's category is a parent category
+              setSubcategories(allCats.filter((c) => (c.parent && (c.parent._id === matched._id || c.parent === matched._id))));
+              setProduct((prev) => ({ ...prev, parentCategory: matched._id, category: prev.category }));
+            }
+          } else {
+            // no match, leave as-is
+          }
+        } catch (e) {}
         // set preview to resolved image url for current product
         try {
           const apiBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
@@ -193,20 +219,38 @@ export default function EditProductPage() {
 
             <div className="col-md-6 mb-3">
               <label className="form-label fw-semibold">Category</label>
+              {/* Parent select */}
               <select
-                className="form-select"
-                value={product.category}
-                onChange={(e) =>
-                  setProduct({ ...product, category: e.target.value })
-                }
+                className="form-select mb-2"
+                value={product.parentCategory || ""}
+                onChange={(e) => {
+                  const pid = e.target.value;
+                  setProduct({ ...product, parentCategory: pid, category: "" });
+                  // compute subcategories from loaded categories
+                  const children = categories.filter((c) => c.parent && (c.parent._id === pid || c.parent === pid));
+                  setSubcategories(children);
+                  if (children.length === 0) {
+                    setProduct((prev) => ({ ...prev, category: pid }));
+                  }
+                }}
                 required
               >
-                <option value="">Select Category</option>
-                {categories.map((cat) => (
-                  <option
-                    key={cat._id || cat.id || cat.name}
-                    value={cat.name}
-                  >
+                <option value="">Select Parent Category</option>
+                {parents.map((p) => (
+                  <option key={p._id} value={p._id}>{p.name}</option>
+                ))}
+              </select>
+
+              {/* Subcategory select */}
+              <select
+                className="form-select"
+                value={product.category || ""}
+                onChange={(e) => setProduct({ ...product, category: e.target.value })}
+                required
+              >
+                <option value="">Select Subcategory</option>
+                {subcategories.map((cat) => (
+                  <option key={cat._id || cat.id || cat.name} value={cat._id || cat.id || cat.name}>
                     {cat.name}
                   </option>
                 ))}

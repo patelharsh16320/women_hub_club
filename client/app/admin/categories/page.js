@@ -16,6 +16,7 @@ export default function CategoriesPage() {
     try {
       setLoading(true);
       const data = await fetchAPI("/categories");
+      // data is flat list with parent populated
       setCats(data || []);
     } catch (err) {
   toastMessage.error("Failed to load categories");
@@ -117,6 +118,7 @@ export default function CategoriesPage() {
                 <tr>
                   <th style={{ width: "80px" }}>#</th>
                   <th>Name</th>
+                  <th>Parent</th>
                   <th className="text-center">Actions</th>
                 </tr>
               </thead>
@@ -132,6 +134,10 @@ export default function CategoriesPage() {
 
                     <td className="fw-medium">
                       {c.name}
+                    </td>
+
+                    <td>
+                      {c.parent && c.parent.name ? c.parent.name : "—"}
                     </td>
 
                     <td className="text-center">

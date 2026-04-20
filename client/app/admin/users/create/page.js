@@ -1,12 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { fetchAPI } from "../../../../services/api";
 import Link from "next/link";
 
 export default function CreateUserPage() {
   const router = useRouter();
+  useEffect(() => {
+    // Hide direct access to create user page by redirecting to users list
+    router.replace("/admin/users");
+  }, [router]);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -31,47 +35,6 @@ export default function CreateUserPage() {
     }
   };
 
-  return (
-    <div className="create-user-page container py-5">
-      <h2 className="text-2xl font-bold mb-4">Create User</h2>
-      {error && <p className="form-error">{error}</p>}
-        <Link href="/admin/users" className="btn btn-dark create-btn">
-          + Back to Users
-        </Link>
-      <form onSubmit={submit} className="create-user-card">
-        <div className="mb-3">
-          <label className="block text-sm">Name</label>
-          <input className="w-full border px-2 py-1" value={name} onChange={(e) => setName(e.target.value)} required />
-        </div>
-        <div>
-          <label className="block text-sm">Email</label>
-          <input type="email" className="w-full border px-2 py-1" value={email} onChange={(e) => setEmail(e.target.value)} required />
-        </div>
-        <div>
-          <label className="block text-sm">Password</label>
-          <input type="password" className="w-full border px-2 py-1" value={password} onChange={(e) => setPassword(e.target.value)} required />
-        </div>
-        <div className="mb-3">
-          <label className="form-label-light fw-semibold">Role</label>
-          <select
-            name="role"
-            className="form-control"
-            value={role}
-            onChange={(e) => setRole(e.target.value)}
-            required
-          >
-            <option value="admin">Admin</option>
-            <option value="editor">Editor</option>
-            <option value="author">Author</option>
-            <option value="user">User</option>
-          </select>
-        </div>
-        <div>
-          <button type="submit" className="btn btn-dark w-full" disabled={loading}>
-            {loading ? "Creating..." : "Create User"}
-          </button>
-        </div>
-      </form>
-    </div>
-  );
+  // Page is hidden; redirect above. Render nothing to avoid a flash.
+  return null;
 }

@@ -12,7 +12,8 @@ exports.getOrders = async (req, res) => {
   const userId = req.query.userId;
   let filter = {};
   if (userId) filter.user = userId;
-  const orders = await Order.find(filter).sort({ createdAt: -1 });
+  // Populate user for admin listing
+  const orders = await Order.find(filter).populate('user', 'name email').sort({ createdAt: -1 });
   res.json(orders);
 };
 
