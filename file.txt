@@ -12,24 +12,23 @@ or
 
 
 
-        modified:   client/app/admin/categories/[id]/edit/page.js
-        modified:   client/app/admin/categories/create/page.js
-        modified:   client/app/admin/categories/page.js
-        modified:   client/app/admin/layout.js
-        modified:   client/app/admin/products/[id]/edit/page.js
-        modified:   client/app/admin/products/create/page.js
-        modified:   client/app/admin/users/create/page.js
-        modified:   client/app/admin/users/page.js
-        modified:   client/app/components/Header.js
-        modified:   client/app/shop/page.js
-        modified:   client/package-lock.json
-        modified:   file.txt
-        modified:   server/controllers/categoryController.js
-        modified:   server/controllers/orderController.js
-        modified:   server/models/Category.js
+modified:   client/app/admin/categories/[id]/edit/page.js
+modified:   client/app/admin/categories/create/page.js
+modified:   client/app/admin/categories/page.js
+modified:   client/app/admin/layout.js
+modified:   client/app/admin/products/[id]/edit/page.js
+modified:   client/app/admin/products/create/page.js
+modified:   client/app/admin/users/create/page.js
+modified:   client/app/admin/users/page.js
+modified:   client/app/components/Header.js
+modified:   client/app/shop/page.js
+modified:   client/package-lock.json
+modified:   file.txt
+modified:   server/controllers/categoryController.js
+modified:   server/controllers/orderController.js
+modified:   server/models/Category.js
+modified:   client/app/components/StripeCheckoutForm.js
+modified:   client/app/admin/orders/page.js
+modified:   client/app/checkout/page.js
 
-Untracked files:
-  (use "git add <file>..." to include in what will be committed)
-        client/app/admin/orders/
-        server/uploads/1776706075802-834377167.jpg
 

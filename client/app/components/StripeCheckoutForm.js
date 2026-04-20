@@ -12,6 +12,12 @@ export default function StripeCheckoutForm({ onPaymentSuccess, disabled }) {
     setError(null);
     setProcessing(true);
 
+    // If parent checkout says form is disabled (required fields missing), prevent submit
+    if (disabled) {
+      setError('Please fill name, email and address before proceeding with card payment');
+      setProcessing(false);
+      return;
+    }
     if (!stripe || !elements) {
       setError('Stripe not loaded');
       setProcessing(false);

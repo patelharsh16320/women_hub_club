@@ -22,7 +22,7 @@ export default function Checkout() {
 	const [coupon, setCoupon] = useState('');
 	const [discount, setDiscount] = useState(0);
 	const [couponMsg, setCouponMsg] = useState('');
-	const [paymentType, setPaymentType] = useState('stripe'); // 'stripe' or 'cod'
+	const [paymentType, setPaymentType] = useState('stripe'); // 'x`stripe' or 'cod'
 	const router = useRouter();
 
 			useEffect(() => {
