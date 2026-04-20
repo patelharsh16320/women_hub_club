@@ -1,0 +1,15 @@
+client > 
+- npm i
+- npm i bun
+- bun dev
+
+server >
+- npm i
+- npm i nodemon
+- nodmeon server.js
+
+
+
+Updated
+client/app/account/login/page.js
+client/app/admin/products/create/page.js

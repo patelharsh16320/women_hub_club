@@ -158,7 +158,6 @@ export default function CreateProduct() {
 
           {/* Row Inputs */}
           <div className="row">
-
             <div className="col-md-4 mb-3">
               <label className="form-label-light fw-semibold">Price</label>
               <input
@@ -207,9 +206,49 @@ export default function CreateProduct() {
                 required
               />
             </div>
-
           </div>
 
+          {/* Category Dropdown */}
+          <div className="mb-3">
+            <label className="form-label-light fw-semibold">Category</label>
+            <select
+              className="form-select"
+              name="category"
+              value={formData.category}
+              onChange={handleChange}
+              required
+            >
+              <option value="">Select Category</option>
+              {categories.map((cat) => (
+                <option key={cat._id || cat.id || cat.name} value={cat._id || cat.id || cat.name}>
+                  {cat.name}
+                </option>
+              ))}
+            </select>
+          </div>
+{/* 
+          <div className="col-md-6 mb-3">
+            <label className="form-label fw-semibold">Category</label>
+            <select
+              className="form-select"
+              value={product.category}
+              onChange={(e) =>
+                setProduct({ ...product, category: e.target.value })
+              }
+              required
+            >
+              <option value="">Select Category</option>
+              {categories.map((cat) => (
+                <option
+                  key={cat._id || cat.id || cat.name}
+                  value={cat.name}
+                >
+                  {cat.name}
+                </option>
+              ))}
+            </select>
+          </div> */}
+        
           {/* Image Upload */}
           <div className="mb-4">
             <label className="form-label-light fw-semibold">Product Image</label>

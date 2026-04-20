@@ -37,8 +37,14 @@ export default function LoginPage() {
       // notify header
       window.dispatchEvent(new Event("userChanged"));
 
-  toastMessage.success("Login successful!");
-  router.push("/");
+      toastMessage.success("Login successful!");
+
+      // Redirect based on role
+      if (userData.role === 'admin') {
+        window.location.href = 'http://localhost:3000/admin';
+      } else {
+        window.location.href = 'http://localhost:3000/';
+      }
     } catch (err) {
   setError(err.message || "Invalid credentials");
   toastMessage.error(err.message || "Invalid credentials");
