@@ -6,7 +6,11 @@ const productSchema = new mongoose.Schema(
     description: String,
     price: Number,
     image: String,
-    category: String,
+    category: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Category",
+      required: false,
+    },
     countInStock: Number,
 
     // NEW (recommended)

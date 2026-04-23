@@ -8,7 +8,9 @@ const adminLinks = [
   { href: "/admin/products/manage", label: "All Products", icon: "bi-gear" },
   { href: "/admin/products/create", label: "Create Product", icon: "bi-plus-square" },  
   { href: "/admin/categories", label: "Categories", icon: "bi-tags" },
-  { href: "/admin/categories/create", label: "Create Category", icon: "bi-tag" },
+  // { href: "/admin/categories/create", label: "Create Category", icon: "bi-tag" },
+  { href: "/admin/categories/parent", label: "Parent Categories", icon: "bi-diagram-3" },
+  { href: "/admin/categories/child", label: "Child Categories", icon: "bi-diagram-2" },
   { href: "/admin/users", label: "Users", icon: "bi-people" },
   { href: "/admin/orders", label: "Orders", icon: "bi-receipt" },
   // Create User intentionally hidden from frontend UI

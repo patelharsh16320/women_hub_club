@@ -3,23 +3,30 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { fetchAPI } from "../../../../services/api";
+import { getCategories } from "../../../../services/categoryService";
 import { toastMessage } from "../../../../utils/toastMessage";
 
 const ITEMS_PER_PAGE = 10;
 
 export default function ManageProductsPage() {
   const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+
 
   const load = async () => {
     try {
       setLoading(true);
-      const data = await fetchAPI("/products");
-      setProducts(data || []);
+      const [productsData, categoriesData] = await Promise.all([
+        fetchAPI("/products"),
+        getCategories()
+      ]);
+      setProducts(productsData || []);
+      setCategories(Array.isArray(categoriesData) ? categoriesData : categoriesData.categories || []);
     } catch (err) {
       console.error(err);
-  toastMessage.error("Failed to load products");
+      toastMessage.error("Failed to load products or categories");
     } finally {
       setLoading(false);
     }
@@ -132,13 +139,22 @@ export default function ManageProductsPage() {
                 // Global index across all pages
                 const globalIndex = startIndex + index + 1;
 
+                // Handle category and parent display for both string and object
+                let categoryName = "";
+                let parentNames = [];
+                if (typeof p.category === "object" && p.category !== null) {
+                  categoryName = p.category.name || "";
+                  if (Array.isArray(p.category.parent)) {
+                    parentNames = p.category.parent.map(parent => parent && parent.name ? parent.name : "").filter(Boolean);
+                  }
+                } else {
+                  categoryName = p.category || "";
+                }
+
                 return (
                   <tr key={p._id}>
-
                     <td className="fw-semibold">{globalIndex}</td>
-
                     <td className="fw-medium">{p.name}</td>
-
                     <td>
                       {imgSrc ? (
                         <img
@@ -150,24 +166,24 @@ export default function ManageProductsPage() {
                         <span className="text-muted">No image</span>
                       )}
                     </td>
-
                     <td className="fw-semibold">₹ {p.price}</td>
-
                     <td>
                       <span className="badge bg-dark">
-                        {p.category}
+                        {categoryName}
+                        {parentNames.length > 0 && (
+                          <span className="badge bg-secondary ms-2">
+                            Parent{parentNames.length > 1 ? 's' : ''}: {parentNames.join(", ")}
+                          </span>
+                        )}
                       </span>
                     </td>
-
                     <td className="text-center">
-
                       <Link
                         href={`/admin/products/${p._id}/edit`}
                         className="btn btn-sm btn-outline-dark me-2"
                       >
                         Edit
                       </Link>
-
                       <button
                         onClick={() => handleDelete(p._id)}
                         className="btn btn-sm btn-danger"

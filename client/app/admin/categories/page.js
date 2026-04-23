@@ -19,7 +19,7 @@ export default function CategoriesPage() {
       // data is flat list with parent populated
       setCats(data || []);
     } catch (err) {
-  toastMessage.error("Failed to load categories");
+      toastMessage.error("Failed to load categories");
     } finally {
       setLoading(false);
     }
@@ -30,8 +30,8 @@ export default function CategoriesPage() {
   }, []);
 
   const handleDelete = async (id) => {
-  toastMessage.info("Delete this category?");
-  if (!window.confirm("Delete this category?")) return;
+    toastMessage.info("Delete this category?");
+    if (!window.confirm("Delete this category?")) return;
 
     try {
       await fetchAPI(`/categories/${id}`, { method: "DELETE" });
@@ -44,7 +44,7 @@ export default function CategoriesPage() {
         return updated;
       });
     } catch (err) {
-  toastMessage.error("Delete failed");
+      toastMessage.error("Delete failed");
     }
   };
 
@@ -81,17 +81,14 @@ export default function CategoriesPage() {
 
   return (
     <div className="admin-categories">
-
       {/* Dark Header */}
       <div className="admin-header">
         <h4 className="mb-0">Categories</h4>
       </div>
 
       <div className="container py-4">
-
         {/* Page Header */}
         <div className="d-flex justify-content-between align-items-center mb-4">
-
           <div>
             <h3 className="fw-bold mb-1">Manage Categories</h3>
             <p className="text-muted mb-0">
@@ -99,21 +96,26 @@ export default function CategoriesPage() {
             </p>
           </div>
 
-          <Link href="/admin/categories/create" className="btn btn-dark px-4">
-            + Create Category
+          <Link
+            href="/admin/categories/parent"
+            className="btn btn-dark create-btn"
+          >
+            + Create Parent Category
           </Link>
-
+          <Link
+            href="/admin/categories/child"
+            className="btn btn-dark create-btn"
+          >
+            + Create Child Category
+          </Link>
         </div>
 
         {loading && <p>Loading categories...</p>}
 
         {/* Table Card */}
         <div className="card shadow-sm border-0">
-
           <div className="table-responsive">
-
             <table className="table align-middle mb-0">
-
               <thead className="table-light">
                 <tr>
                   <th style={{ width: "80px" }}>#</th>
@@ -124,24 +126,15 @@ export default function CategoriesPage() {
               </thead>
 
               <tbody>
-
                 {paginatedCats.map((c, index) => (
                   <tr key={c._id}>
+                    <td className="fw-semibold">{startIndex + index + 1}</td>
 
-                    <td className="fw-semibold">
-                      {startIndex + index + 1}
-                    </td>
+                    <td className="fw-medium">{c.name}</td>
 
-                    <td className="fw-medium">
-                      {c.name}
-                    </td>
-
-                    <td>
-                      {c.parent && c.parent.name ? c.parent.name : "—"}
-                    </td>
+                    <td>{c.parent && c.parent.name ? c.parent.name : "—"}</td>
 
                     <td className="text-center">
-
                       <Link
                         href={`/admin/categories/${c._id}/edit`}
                         className="btn btn-sm btn-outline-dark me-2"
@@ -155,9 +148,7 @@ export default function CategoriesPage() {
                       >
                         Delete
                       </button>
-
                     </td>
-
                   </tr>
                 ))}
 
@@ -168,26 +159,25 @@ export default function CategoriesPage() {
                     </td>
                   </tr>
                 )}
-
               </tbody>
-
             </table>
-
           </div>
 
           {/* Pagination */}
           {totalPages > 1 && (
             <div className="d-flex justify-content-between align-items-center px-3 py-3 border-top">
-
-              <p className="text-muted mb-0" style={{ fontSize: "14px" }}>
-                Showing <strong>{startIndex + 1}</strong>–<strong>{Math.min(endIndex, cats.length)}</strong> of <strong>{cats.length}</strong> categories
+              <p className=" mb-0 text-light" style={{ fontSize: "14px" }}>
+                Showing <strong>{startIndex + 1}</strong>–
+                <strong>{Math.min(endIndex, cats.length)}</strong> of{" "}
+                <strong>{cats.length}</strong> categories
               </p>
 
               <nav>
                 <ul className="pagination pagination-sm mb-0">
-
                   {/* Previous */}
-                  <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+                  <li
+                    className={`page-item ${currentPage === 1 ? "disabled" : ""}`}
+                  >
                     <button
                       className="page-link"
                       onClick={() => handlePageChange(currentPage - 1)}
@@ -211,16 +201,25 @@ export default function CategoriesPage() {
                         <button
                           className="page-link"
                           onClick={() => handlePageChange(page)}
-                          style={currentPage === page ? { backgroundColor: "#212529", borderColor: "#212529" } : {}}
+                          style={
+                            currentPage === page
+                              ? {
+                                  backgroundColor: "#212529",
+                                  borderColor: "#212529",
+                                }
+                              : {}
+                          }
                         >
                           {page}
                         </button>
                       </li>
-                    )
+                    ),
                   )}
 
                   {/* Next */}
-                  <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+                  <li
+                    className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}
+                  >
                     <button
                       className="page-link"
                       onClick={() => handlePageChange(currentPage + 1)}
@@ -229,15 +228,11 @@ export default function CategoriesPage() {
                       &raquo;
                     </button>
                   </li>
-
                 </ul>
               </nav>
-
             </div>
           )}
-
         </div>
-
       </div>
     </div>
   );

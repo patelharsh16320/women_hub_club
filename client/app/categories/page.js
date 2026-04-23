@@ -34,9 +34,6 @@ export default function CategoriesPage() {
     <div className="max-w-4xl mx-auto py-8 container">
       <div className="categories-header my-5">
         <h1 className="text-white">Categories</h1>
-        <Link href="/categories/create" className="btn btn-dark create-btn">
-          + Create Category
-        </Link>
       </div>
 
       <div className="categories-card">

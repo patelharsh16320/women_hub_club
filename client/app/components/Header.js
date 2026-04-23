@@ -111,35 +111,25 @@ export default function Header() {
           {/* Navbar Menu */}
           <div className="collapse navbar-collapse" id="navbarContent">
             <ul className="navbar-nav ms-auto align-items-lg-center">
-              {/* Admin: show only /admin links */}
-              {user && user.role === "admin" ? (
-                <>
-                  {/* Products Dropdown */}
-                  <li className="nav-item dropdown">
-                    <a
-                      className="nav-link dropdown-toggle"
-                      href="#"
-                      role="button"
-                      data-bs-toggle="dropdown"
-                    >
-                      Products
-                    </a>
-                    <ul className="dropdown-menu">
-                      <li>
-                        <Link href="/admin/products/create" className="dropdown-item">
-                          Create Product
+                  {/* Admin: show only /admin links */}
+                  {user && user.role === "admin" ? (
+                    <>
+                      {/* Dashboard Link */}
+                      <li className="nav-item">
+                        <Link href="/admin/" className="nav-link">
+                          Dashboard
                         </Link>
                       </li>
-                      <li>
-                        <Link href="/admin/products/manage" className="dropdown-item">
-                          Manage Products
-                        </Link>
-                      </li>
-                    </ul>
-                  </li>
 
-                  {/* Categories Dropdown */}
-                  <li className="nav-item dropdown">
+                      {/* Products Link */}
+                      <li className="nav-item">
+                        <Link href="/products/" className="nav-link">
+                          Products
+                        </Link>
+                      </li>
+
+                      {/* Categories Dropdown */}
+                  {/* <li className="nav-item dropdown">
                     <a
                       className="nav-link dropdown-toggle"
                       href="#"
@@ -155,15 +145,25 @@ export default function Header() {
                         </Link>
                       </li>
                       <li>
+                        <Link href="/admin/categories/parent" className="dropdown-item">
+                          Create Parent Category
+                        </Link>
+                      </li>
+                      <li>
+                        <Link href="/admin/categories/child" className="dropdown-item">
+                          Create Child Category
+                        </Link>
+                      </li>
+                      <li>
                         <Link href="/admin/categories" className="dropdown-item">
                           Manage Categories
                         </Link>
                       </li>
                     </ul>
-                  </li>
+                  </li> */}
 
                   {/* Users Dropdown */}
-                  <li className="nav-item dropdown">
+                  {/* <li className="nav-item dropdown">
                     <a
                       className="nav-link dropdown-toggle"
                       href="#"
@@ -179,7 +179,7 @@ export default function Header() {
                         </Link>
                       </li>
                     </ul>
-                  </li>
+                  </li> */}
                  <Link href="/admin/orders" className="dropdown-item">
                           All Orders
                         </Link>

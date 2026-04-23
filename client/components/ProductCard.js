@@ -60,7 +60,24 @@ export default function ProductCard({ product }) {
           </p>
 
           <span className="badge bg-light text-dark mb-3">
-            {product.category}
+            {typeof product.category === "object" && product.category !== null ? (
+              <>
+                {product.category.name}
+                {Array.isArray(product.category.parent) && product.category.parent.length > 0 && (
+                  <>
+                    {" (Parent"}
+                    {product.category.parent.length > 1 ? "s" : ""}
+                    {": "}
+                    {product.category.parent.map(
+                      (parent, idx) => parent && parent.name ? parent.name : ""
+                    ).filter(Boolean).join(", ")}
+                    {")"}
+                  </>
+                )}
+              </>
+            ) : (
+              product.category
+            )}
           </span>
 
           {/* Button */}

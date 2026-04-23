@@ -147,9 +147,10 @@ export default function EditProductPage() {
 
         <form onSubmit={handleSubmit}>
 
+
           {/* Product Name */}
           <div className="mb-3">
-            <label className="form-label fw-semibold">Product Name</label>
+            <label className=" fw-semibold text-light">Product Name</label>
             <input
               type="text"
               className="form-control"
@@ -163,7 +164,7 @@ export default function EditProductPage() {
 
           {/* Image */}
           <div className="mb-3">
-            <label className="form-label fw-semibold">Product Image</label>
+            <label className=" fw-semibold text-light">Product Image</label>
             <input
               type="file"
               accept="image/*"
@@ -191,7 +192,7 @@ export default function EditProductPage() {
 
           {/* Description */}
           <div className="mb-3">
-            <label className="form-label fw-semibold">Description</label>
+            <label className=" fw-semibold text-light">Description</label>
             <textarea
               className="form-control"
               rows="4"
@@ -202,10 +203,10 @@ export default function EditProductPage() {
             />
           </div>
 
-          {/* Price + Category */}
+          {/* Price, Sell Price, Category */}
           <div className="row">
-            <div className="col-md-6 mb-3">
-              <label className="form-label fw-semibold">Price</label>
+            <div className="col-md-4 mb-3">
+              <label className=" fw-semibold text-light">Price</label>
               <input
                 type="number"
                 className="form-control"
@@ -217,9 +218,30 @@ export default function EditProductPage() {
               />
             </div>
 
-            <div className="col-md-6 mb-3">
-              <label className="form-label fw-semibold">Category</label>
-              {/* Parent select */}
+            {/* Sell Price */}
+            <div className="col-md-4 mb-3">
+              <label className=" fw-semibold text-light">Sell Price</label>
+              <input
+                type="number"
+                className="form-control"
+                value={product.sellPrice || ""}
+                onChange={(e) =>
+                  setProduct({ ...product, sellPrice: e.target.value })
+                }
+                min={0}
+                max={product.price ? product.price - 1 : undefined}
+                placeholder="Enter sell price (less than price)"
+              />
+              {product.sellPrice !== undefined && product.sellPrice !== "" && Number(product.sellPrice) >= Number(product.price) && (
+                <div className="text-danger small mt-1">
+                  Sell price must be less than original price.
+                </div>
+              )}
+            </div>
+
+            <div className="col-md-4 mb-3">
+              <label className=" fw-semibold text-light">Category</label>
+              {/* Parent select (not required, show all parents) */}
               <select
                 className="form-select mb-2"
                 value={product.parentCategory || ""}
@@ -233,22 +255,20 @@ export default function EditProductPage() {
                     setProduct((prev) => ({ ...prev, category: pid }));
                   }
                 }}
-                required
               >
-                <option value="">Select Parent Category</option>
+                <option value="">Select Parent Category (optional)</option>
                 {parents.map((p) => (
                   <option key={p._id} value={p._id}>{p.name}</option>
                 ))}
               </select>
 
-              {/* Subcategory select */}
+              {/* Subcategory select (not required) */}
               <select
                 className="form-select"
                 value={product.category || ""}
                 onChange={(e) => setProduct({ ...product, category: e.target.value })}
-                required
               >
-                <option value="">Select Subcategory</option>
+                <option value="">Select Subcategory (optional)</option>
                 {subcategories.map((cat) => (
                   <option key={cat._id || cat.id || cat.name} value={cat._id || cat.id || cat.name}>
                     {cat.name}
@@ -260,7 +280,7 @@ export default function EditProductPage() {
 
           {/* Stock */}
           <div className="mb-4">
-            <label className="form-label fw-semibold">Stock</label>
+            <label className=" fw-semibold text-light">Stock</label>
             <input
               type="number"
               className="form-control"

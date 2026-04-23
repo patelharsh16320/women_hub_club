@@ -154,7 +154,7 @@ export default function CreateProduct() {
                 step="any"
                 value={formData.sellPrice}
                 onChange={handleChange}
-                required
+                
                 placeholder="Enter sell price (less than price)"
               />
               {formData.sellPrice !== "" && Number(formData.sellPrice) >= Number(formData.price) && (

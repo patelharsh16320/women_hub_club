@@ -48,7 +48,12 @@ exports.createProduct = async (req, res) => {
 
 // READ ALL
 exports.getProducts = async (req, res) => {
-  const products = await Product.find();
+  const products = await Product.find()
+    .populate({
+      path: "category",
+      populate: { path: "parent", select: "name" },
+      select: "name parent"
+    });
   res.json(products);
 };
 
@@ -61,7 +66,12 @@ exports.getProductById = async (req, res) => {
     return res.status(400).json({ message: "Invalid product id" });
   }
 
-  const product = await Product.findById(id);
+  const product = await Product.findById(id)
+    .populate({
+      path: "category",
+      populate: { path: "parent", select: "name" },
+      select: "name parent"
+    });
   if (!product) return res.status(404).json({ message: "Product not found" });
   res.json(product);
 };

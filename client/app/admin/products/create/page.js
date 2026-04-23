@@ -103,9 +103,21 @@ export default function CreateProduct() {
         sellPrice: safeSellPrice,
         countInStock: Math.max(Number(formData.countInStock), 1),
       };
+      // If no category selected, set to 'General' (find by name)
+      let categoryId = safeFormData.category;
+      if (!categoryId) {
+        const generalCat = categories.find(c => c.name && c.name.toLowerCase() === "general");
+        if (generalCat) {
+          categoryId = generalCat._id || generalCat.id || generalCat.name;
+        }
+      }
       const data = new FormData();
       Object.keys(safeFormData).forEach((key) => {
-        data.append(key, safeFormData[key]);
+        if (key === "category") {
+          data.append("category", categoryId || "");
+        } else {
+          data.append(key, safeFormData[key]);
+        }
       });
       if (image) {
         data.append("image", image);
@@ -191,7 +203,7 @@ export default function CreateProduct() {
                 step="any"
                 value={formData.sellPrice}
                 onChange={handleChange}
-                required
+                
                 placeholder="Enter sell price (less than price)"
               />
               {formData.sellPrice !== "" && Number(formData.sellPrice) >= Number(formData.price) && (
@@ -244,7 +256,7 @@ export default function CreateProduct() {
                     setFormData((f) => ({ ...f, category: pid }));
                   }
                 }}
-              required
+              
             >
               <option value="">Select Parent Category</option>
               {parents.map((p) => (
@@ -258,7 +270,7 @@ export default function CreateProduct() {
               name="category"
               value={formData.category}
               onChange={handleChange}
-              required
+              
             >
               <option value="">Select Subcategory</option>
               {subcategories.map((cat) => (

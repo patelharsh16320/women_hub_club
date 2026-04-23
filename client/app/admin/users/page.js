@@ -94,7 +94,7 @@ export default function UsersListPage() {
           <tbody>
             {paginatedUsers.map((u, index) => (
               <tr key={u._id || u.id} className="border-t">
-                <td className="p-2">{index + 1}</td>
+                <td className="p-2">{startIndex+index + 1}</td>
                 <td className="p-2">{u.name}</td>
                 <td className="p-2">{u.email}</td>
                 <td className="p-2">{u.role}</td>
