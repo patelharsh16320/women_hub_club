@@ -27,3 +27,4 @@ New Feature:
 Reaming:
 Product Status
     - Publish, Draft, Trash
+    - sell price reaming Frontend + baackend too

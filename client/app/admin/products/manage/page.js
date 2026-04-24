@@ -181,6 +181,7 @@ export default function ManageProductsPage() {
                 <th>Name</th>
                 <th>Image</th>
                 <th>Price</th>
+                {/* <th>Sell Price</th> */}
                 <th>Category</th>
                 <th className="text-center">Actions</th>
               </tr>
@@ -228,6 +229,7 @@ export default function ManageProductsPage() {
                       )}
                     </td>
                     <td className="fw-semibold">₹ {p.price}</td>
+                    {/* <td className="fw-semibold">₹ {p.price}</td> */}
                     <td>
                       <span className="badge bg-dark">
                         {categoryName}
