@@ -9,3 +9,6 @@ server >
 or 
 - npm install nodemon --save-dev
 - nodmeon server.js
+
+
+Categories Done
