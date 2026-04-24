@@ -48,11 +48,61 @@ export default function CategoriesPage() {
     }
   };
 
-  // Pagination calculations
-  const totalPages = Math.ceil(cats.length / ITEMS_PER_PAGE);
+  // Build a map of parentId -> unique children
+  const parentToChildren = {};
+  cats.forEach(cat => {
+    if (Array.isArray(cat.parent)) {
+      cat.parent.forEach(p => {
+        if (p && p._id) {
+          if (!parentToChildren[p._id]) parentToChildren[p._id] = new Map();
+          parentToChildren[p._id].set(cat._id, cat);
+        }
+      });
+    } else if (cat.parent && cat.parent._id) {
+      if (!parentToChildren[cat.parent._id]) parentToChildren[cat.parent._id] = new Map();
+      parentToChildren[cat.parent._id].set(cat._id, cat);
+    }
+  });
+
+  // Filter parent categories (no parent or parent is 'General'), remove duplicates by _id
+  const parentSeen = new Set();
+  const parentCategories = cats.filter(cat => {
+    if (parentSeen.has(cat._id)) return false;
+    if (!cat.parent || (Array.isArray(cat.parent) && cat.parent.length === 0)) {
+      parentSeen.add(cat._id);
+      return true;
+    }
+    if (Array.isArray(cat.parent) && cat.parent.some(p => p && p.name === "General")) {
+      parentSeen.add(cat._id);
+      return true;
+    }
+    if (cat.parent && cat.parent.name === "General") {
+      parentSeen.add(cat._id);
+      return true;
+    }
+    return false;
+  });
+
+  // Filter child categories (has parent, and parent is not only 'General'), remove duplicates by _id
+  const childSeen = new Set();
+  const childCategories = cats.filter(cat => {
+    if (childSeen.has(cat._id)) return false;
+    if (Array.isArray(cat.parent) && cat.parent.length > 0 && !cat.parent.some(p => p && p.name === "General")) {
+      childSeen.add(cat._id);
+      return true;
+    }
+    if (cat.parent && cat.parent.name !== "General") {
+      childSeen.add(cat._id);
+      return true;
+    }
+    return false;
+  });
+
+  // Pagination for parent categories only
+  const totalPages = Math.ceil(parentCategories.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const endIndex = startIndex + ITEMS_PER_PAGE;
-  const paginatedCats = cats.slice(startIndex, endIndex);
+  const paginatedParents = parentCategories.slice(startIndex, endIndex);
 
   const handlePageChange = (page) => {
     if (page < 1 || page > totalPages) return;
@@ -92,7 +142,7 @@ export default function CategoriesPage() {
           <div>
             <h3 className="fw-bold mb-1">Manage Categories</h3>
             <p className="text-muted mb-0">
-              Total Categories : <strong>{cats.length}</strong>
+              Total Parent Categories: <strong>{parentCategories.length}</strong> &nbsp;|&nbsp; Total Child Categories: <strong>{childCategories.length}</strong>
             </p>
           </div>
 
@@ -120,39 +170,24 @@ export default function CategoriesPage() {
                 <tr>
                   <th style={{ width: "80px" }}>#</th>
                   <th>Name</th>
-                  <th>Parent</th>
-                  <th className="text-center">Actions</th>
-                </tr>
+                  </tr>
               </thead>
 
               <tbody>
-                {paginatedCats.map((c, index) => (
-                  <tr key={c._id}>
+                {paginatedParents.map((parent, index) => [
+                  <tr key={parent._id} style={{ background: '#f8f9fa' }}>
                     <td className="fw-semibold">{startIndex + index + 1}</td>
+                    <td className="fw-medium">{parent.name}</td>
+                  </tr>,
+                  ...((parentToChildren[parent._id] ? Array.from(parentToChildren[parent._id].values()) : []).map(child => (
+                    <tr key={child._id}>
+                      <td></td>
+                      <td style={{ paddingLeft: 32 }}>&#8627; {child.name}</td>
+                    </tr>
+                  )))
+                ])}
 
-                    <td className="fw-medium">{c.name}</td>
-
-                    <td>{c.parent && c.parent.name ? c.parent.name : "—"}</td>
-
-                    <td className="text-center">
-                      <Link
-                        href={`/admin/categories/${c._id}/edit`}
-                        className="btn btn-sm btn-outline-dark me-2"
-                      >
-                        Edit
-                      </Link>
-
-                      <button
-                        className="btn btn-sm btn-danger"
-                        onClick={() => handleDelete(c._id)}
-                      >
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-
-                {!loading && cats.length === 0 && (
+                {!loading && parentCategories.length === 0 && (
                   <tr>
                     <td colSpan="3" className="text-center py-4 text-muted">
                       No categories found

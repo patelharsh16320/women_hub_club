@@ -26,8 +26,12 @@ export default function ParentCategoryManager() {
 
   const handleCreate = async (e) => {
     e.preventDefault();
-    if (!name.trim()) return toastMessage.error("Name required");
-    await createCategory(name, []);
+    const trimmedName = name.trim();
+    if (!trimmedName) return toastMessage.error("Name required");
+    // Check for duplicate (case-insensitive)
+    const duplicate = categories.some(cat => cat.name.trim().toLowerCase() === trimmedName.toLowerCase());
+    if (duplicate) return toastMessage.error("Duplicate category name not allowed");
+    await createCategory(trimmedName, []);
     setName("");
     toastMessage.success("Created");
     load();
@@ -40,7 +44,12 @@ export default function ParentCategoryManager() {
 
   const handleUpdate = async (e) => {
     e.preventDefault();
-    await updateCategory(editId, editName, []);
+    const trimmedEditName = editName.trim();
+    if (!trimmedEditName) return toastMessage.error("Name required");
+    // Check for duplicate (case-insensitive, exclude self)
+    const duplicate = categories.some(cat => cat._id !== editId && cat.name.trim().toLowerCase() === trimmedEditName.toLowerCase());
+    if (duplicate) return toastMessage.error("Duplicate category name not allowed");
+    await updateCategory(editId, trimmedEditName, []);
     setEditId(null);
     setEditName("");
     toastMessage.success("Updated");

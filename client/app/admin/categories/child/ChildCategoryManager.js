@@ -32,22 +32,28 @@ export default function ChildCategoryManager() {
   const handleCreate = async (e) => {
     e.preventDefault();
     if (!name.trim()) return toastMessage.error("Name required");
-    if (!parents.length) return toastMessage.error("Select at least one parent");
+    let usedParents = parents;
+    // If no parent selected, assign 'General' as default
+    if (!parents.length) {
+      const generalCat = allCategories.find(cat => cat.name === "General");
+      if (generalCat) usedParents = [generalCat._id];
+    }
+    if (!usedParents.length) return toastMessage.error("No parent category found");
     // Allow same name if parents are different
     const normalizedName = name.trim().toLowerCase();
-    const parentsSet = new Set(parents);
+    const parentsSet = new Set(usedParents);
     const exists = categories.some(cat => {
       if (cat.name.trim().toLowerCase() !== normalizedName) return false;
       // Compare parent sets
       const catParentIds = (cat.parent || []).map(p => typeof p === 'string' ? p : p?._id).filter(Boolean);
-      if (catParentIds.length !== parents.length) return false;
+      if (catParentIds.length !== usedParents.length) return false;
       return catParentIds.every(pid => parentsSet.has(pid));
     });
     if (exists) {
       toastMessage.error("Category with this name and parent(s) already exists");
       return;
     }
-    await createCategory(name, parents);
+    await createCategory(name, usedParents);
     setName("");
     setParents([]);
     toastMessage.success("Created");
@@ -62,7 +68,12 @@ export default function ChildCategoryManager() {
 
   const handleUpdate = async (e) => {
     e.preventDefault();
-    await updateCategory(editId, editName, editParents);
+    let usedParents = editParents;
+    if (!editParents.length) {
+      const generalCat = allCategories.find(cat => cat.name === "General");
+      if (generalCat) usedParents = [generalCat._id];
+    }
+    await updateCategory(editId, editName, usedParents);
     setEditId(null);
     setEditName("");
     setEditParents([]);
@@ -71,6 +82,12 @@ export default function ChildCategoryManager() {
   };
 
   const handleDelete = async (id) => {
+    // Prevent deleting 'General' category
+    const generalCat = allCategories.find(cat => cat.name === "General");
+    if (generalCat && id === generalCat._id) {
+      toastMessage.error("Cannot delete the default 'General' category");
+      return;
+    }
     if (!window.confirm("Delete this child category?")) return;
     await deleteCategory(id);
     toastMessage.success("Deleted");
@@ -92,9 +109,23 @@ export default function ChildCategoryManager() {
   };
 
   // Pagination logic
-  const totalPages = Math.ceil(categories.length / ITEMS_PER_PAGE);
+  // Group categories by name, merging parent names
+  const groupedCategories = Object.values(
+    categories.reduce((acc, cat) => {
+      const key = cat.name.trim().toLowerCase();
+      if (!acc[key]) {
+        acc[key] = { ...cat, parentNames: new Set((cat.parent || []).map(p => p?.name).filter(Boolean)), ids: [cat._id], parents: [...(cat.parent || [])] };
+      } else {
+        (cat.parent || []).forEach(p => p?.name && acc[key].parentNames.add(p.name));
+        acc[key].ids.push(cat._id);
+        acc[key].parents.push(...(cat.parent || []));
+      }
+      return acc;
+    }, {})
+  );
+  const totalPages = Math.ceil(groupedCategories.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const paginatedCategories = categories.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  const paginatedCategories = groupedCategories.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
   const handlePageChange = (page) => {
     if (page < 1 || page > totalPages) return;
@@ -124,7 +155,10 @@ export default function ChildCategoryManager() {
         <input value={name} onChange={e => setName(e.target.value)} placeholder="New child category" className="form-control" />
         <select multiple value={parents} onChange={e => setParents(Array.from(e.target.selectedOptions, o => o.value))} className="form-select" style={{maxWidth: 250}}>
           {allCategories.filter(c => !c.parent || c.parent.length === 0 || (Array.isArray(c.parent) && c.parent.some(p => p && p.name === "General")) ).map(cat => (
-            <option key={cat._id} value={cat._id}>{cat.name}</option>
+            <option key={cat._id} value={cat._id}>
+              {cat.name}
+              {cat.name === "General" ? " (default)" : ""}
+            </option>
           ))}
         </select>
         <button className="btn btn-primary">Add</button>
@@ -148,18 +182,36 @@ export default function ChildCategoryManager() {
             </thead>
             <tbody>
               {paginatedCategories.map((cat, idx) => (
-                <tr key={cat._id}>
+                <tr key={cat.name}>
                   <td>
-                    <input type="checkbox" checked={selected.includes(cat._id)} onChange={() => handleSelect(cat._id)} className="form-check-input" />
+                    {/* Checkbox selects all merged categories */}
+                    <input
+                      type="checkbox"
+                      checked={cat.ids.every(id => selected.includes(id))}
+                      onChange={() => {
+                        // Toggle all ids for this name
+                        const allSelected = cat.ids.every(id => selected.includes(id));
+                        setSelected(prev =>
+                          allSelected
+                            ? prev.filter(id => !cat.ids.includes(id))
+                            : Array.from(new Set([...prev, ...cat.ids]))
+                        );
+                      }}
+                      className="form-check-input"
+                    />
                   </td>
                   <td>{startIndex + idx + 1}</td>
                   <td>
-                    {editId === cat._id ? (
+                    {/* Only allow editing the first id in the group */}
+                    {editId && cat.ids.includes(editId) ? (
                       <form onSubmit={handleUpdate} className="d-flex gap-2 align-items-center">
                         <input value={editName} onChange={e => setEditName(e.target.value)} className="form-control" />
                         <select multiple value={editParents} onChange={e => setEditParents(Array.from(e.target.selectedOptions, o => o.value))} className="form-select" style={{maxWidth: 250}}>
                           {allCategories.filter(c => !c.parent || c.parent.length === 0 || (Array.isArray(c.parent) && c.parent.some(p => p && p.name === "General")) ).map(cat => (
-                            <option key={cat._id} value={cat._id}>{cat.name}</option>
+                            <option key={cat._id} value={cat._id}>
+                              {cat.name}
+                              {cat.name === "General" ? " (default)" : ""}
+                            </option>
                           ))}
                         </select>
                         <button className="btn btn-success btn-sm">Save</button>
@@ -170,11 +222,19 @@ export default function ChildCategoryManager() {
                     )}
                   </td>
                   <td>
-                    {cat.parent.map((p) => p?.name).filter(Boolean).join(", ")}
+                    {[...cat.parentNames].join(", ")}
                   </td>
                   <td>
-                    <button className="btn btn-sm btn-outline-dark me-2" onClick={() => handleEdit(cat)}>Edit</button>
-                    <button className="btn btn-sm btn-danger" onClick={() => handleDelete(cat._id)}>Delete</button>
+                    {/* Edit/delete only the first id in the group */}
+                    <button className="btn btn-sm btn-outline-dark me-2" onClick={() => handleEdit({ ...cat, _id: cat.ids[0], parent: cat.parents })}>Edit</button>
+                    {/* Prevent delete for 'General' */}
+                    {(() => {
+                      const generalCat = allCategories.find(c => c.name === "General");
+                      if (generalCat && cat.ids[0] === generalCat._id) {
+                        return <span className="text-muted" style={{fontSize:'13px'}}>default</span>;
+                      }
+                      return <button className="btn btn-sm btn-danger" onClick={() => handleDelete(cat.ids[0])}>Delete</button>;
+                    })()}
                   </td>
                 </tr>
               ))}
