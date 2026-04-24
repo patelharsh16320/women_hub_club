@@ -12,3 +12,18 @@ or
 
 
 Categories Done
+
+--> Force pull
+git fetch origin
+git reset --hard origin/main
+
+New Feature:
+    - Duplicate Product Create
+    - New product Create, Manage Done
+    - Categories 
+        - Parent, Child Categories Create Done
+        - Manage Categories Done.
+
+Reaming:
+Product Status
+    - Publish, Draft, Trash

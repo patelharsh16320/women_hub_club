@@ -21,8 +21,6 @@ export default function CreateProduct() {
   const [preview, setPreview] = useState(null);
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState([]);
-  const [parents, setParents] = useState([]);
-  const [subcategories, setSubcategories] = useState([]);
 
   useEffect(() => {
     async function loadCategories() {
@@ -30,12 +28,8 @@ export default function CreateProduct() {
         const cats = await getCategories();
         const all = Array.isArray(cats) ? cats : cats.categories || [];
         setCategories(all);
-        // top-level parents have parent === null
-        const top = all.filter((c) => !c.parent);
-        setParents(top);
       } catch (e) {
         setCategories([]);
-        setParents([]);
       }
     }
     loadCategories();
@@ -231,53 +225,27 @@ export default function CreateProduct() {
           {/* Category Dropdown */}
           <div className="mb-3">
             <label className="form-label-light fw-semibold">Category</label>
-            {/* Parent category select */}
-            <select
-              className="form-select mb-2"
-              name="parentCategory"
-              value={formData.parentCategory}
-                onChange={async (e) => {
-                  const pid = e.target.value;
-                  setFormData((f) => ({ ...f, parentCategory: pid, category: "" }));
-                  if (!pid) {
-                    setSubcategories([]);
-                    return;
-                  }
-                  try {
-                    const children = await fetchAPI(`/categories?parent=${pid}`);
-                    const arr = Array.isArray(children) ? children : [];
-                    setSubcategories(arr);
-                    // If no children, use parent as category
-                    if (arr.length === 0) {
-                      setFormData((f) => ({ ...f, category: pid }));
-                    }
-                  } catch (err) {
-                    setSubcategories([]);
-                    setFormData((f) => ({ ...f, category: pid }));
-                  }
-                }}
-              
-            >
-              <option value="">Select Parent Category</option>
-              {parents.map((p) => (
-                <option key={p._id} value={p._id}>{p.name}</option>
-              ))}
-            </select>
-
-            {/* Subcategory select (shows only after parent selected) */}
             <select
               className="form-select"
               name="category"
               value={formData.category}
               onChange={handleChange}
-              
             >
-              <option value="">Select Subcategory</option>
-              {subcategories.map((cat) => (
-                <option key={cat._id || cat.id || cat.name} value={cat._id || cat.id || cat.name}>
-                  {cat.name}
-                </option>
-              ))}
+              <option value="">Select Category (optional)</option>
+              {/* Group categories: parents first, then children indented */}
+              {categories
+                .filter(cat => !cat.parent || (Array.isArray(cat.parent) && cat.parent.length === 0) || (Array.isArray(cat.parent) && cat.parent.some(p => p && p.name === "General")) || (cat.parent && cat.parent.name === "General"))
+                .map(parent => [
+                  <option key={parent._id} value={parent._id}>{parent.name}</option>,
+                  ...categories
+                    .filter(child => {
+                      if (Array.isArray(child.parent)) return child.parent.some(p => p && p._id === parent._id);
+                      return child.parent && child.parent._id === parent._id;
+                    })
+                    .map(child => (
+                      <option key={child._id} value={child._id}>&nbsp;&nbsp;&nbsp;↳ {child.name}</option>
+                    ))
+                ])}
             </select>
           </div>
 {/* 

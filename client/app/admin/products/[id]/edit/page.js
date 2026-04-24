@@ -241,39 +241,26 @@ export default function EditProductPage() {
 
             <div className="col-md-4 mb-3">
               <label className=" fw-semibold text-light">Category</label>
-              {/* Parent select (not required, show all parents) */}
-              <select
-                className="form-select mb-2"
-                value={product.parentCategory || ""}
-                onChange={(e) => {
-                  const pid = e.target.value;
-                  setProduct({ ...product, parentCategory: pid, category: "" });
-                  // compute subcategories from loaded categories
-                  const children = categories.filter((c) => c.parent && (c.parent._id === pid || c.parent === pid));
-                  setSubcategories(children);
-                  if (children.length === 0) {
-                    setProduct((prev) => ({ ...prev, category: pid }));
-                  }
-                }}
-              >
-                <option value="">Select Parent Category (optional)</option>
-                {parents.map((p) => (
-                  <option key={p._id} value={p._id}>{p.name}</option>
-                ))}
-              </select>
-
-              {/* Subcategory select (not required) */}
               <select
                 className="form-select"
                 value={product.category || ""}
                 onChange={(e) => setProduct({ ...product, category: e.target.value })}
               >
-                <option value="">Select Subcategory (optional)</option>
-                {subcategories.map((cat) => (
-                  <option key={cat._id || cat.id || cat.name} value={cat._id || cat.id || cat.name}>
-                    {cat.name}
-                  </option>
-                ))}
+                <option value="">Select Category (optional)</option>
+                {/* Group categories: parents first, then children indented */}
+                {categories
+                  .filter(cat => !cat.parent || (Array.isArray(cat.parent) && cat.parent.length === 0) || (Array.isArray(cat.parent) && cat.parent.some(p => p && p.name === "General")) || (cat.parent && cat.parent.name === "General"))
+                  .map(parent => [
+                    <option key={parent._id} value={parent._id}>{parent.name}</option>,
+                    ...categories
+                      .filter(child => {
+                        if (Array.isArray(child.parent)) return child.parent.some(p => p && p._id === parent._id);
+                        return child.parent && child.parent._id === parent._id;
+                      })
+                      .map(child => (
+                        <option key={child._id} value={child._id}>&nbsp;&nbsp;&nbsp;↳ {child.name}</option>
+                      ))
+                  ])}
               </select>
             </div>
           </div>

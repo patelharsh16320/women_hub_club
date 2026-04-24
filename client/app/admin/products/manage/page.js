@@ -54,6 +54,67 @@ export default function ManageProductsPage() {
     }
   };
 
+  // Duplicate product logic
+  const handleDuplicate = async (product) => {
+    try {
+      // Find all products with the same base name
+      const baseName = product.name.replace(/\d{2}$/, "");
+      const regex = new RegExp(`^${baseName}(\\d{2})?$`);
+      const sameNameProducts = products.filter(p => regex.test(p.name));
+      // Find the next available suffix
+      let maxSuffix = 0;
+      sameNameProducts.forEach(p => {
+        const match = p.name.match(/(\d{2})$/);
+        if (match) {
+          const num = parseInt(match[1], 10);
+          if (num > maxSuffix) maxSuffix = num;
+        }
+      });
+      const nextSuffix = (maxSuffix + 1).toString().padStart(2, '0');
+      const newName = `${baseName}${nextSuffix}`;
+
+      // Prepare FormData for product creation
+      const formData = new FormData();
+      formData.append("name", newName);
+      formData.append("description", product.description || "");
+      formData.append("price", product.price);
+      formData.append("category", product.category?._id || product.category || "");
+      formData.append("countInStock", product.countInStock || 0);
+
+      // Duplicate image if exists and is a path
+      if (product.image) {
+        let imgUrl = product.image;
+        // If image is relative, prepend API origin
+        if (imgUrl.startsWith("/uploads")) {
+          const apiBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+          const apiOrigin = (apiBase || "").replace(/\/?api\/?$/i, "");
+          imgUrl = `${apiOrigin}${imgUrl}`;
+        } else if (imgUrl.startsWith("uploads")) {
+          const apiBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+          const apiOrigin = (apiBase || "").replace(/\/?api\/?$/i, "");
+          imgUrl = `${apiOrigin}/${imgUrl}`;
+        }
+        // Fetch the image as blob
+        const imgResp = await fetch(imgUrl);
+        if (imgResp.ok) {
+          const imgBlob = await imgResp.blob();
+          // Use original filename if possible
+          const filename = imgUrl.split("/").pop() || "image.jpg";
+          formData.append("image", imgBlob, filename);
+        }
+      }
+
+      await fetchAPI("/products", {
+        method: "POST",
+        body: formData,
+      });
+      toastMessage.success("Product duplicated");
+      load();
+    } catch (err) {
+      toastMessage.error("Duplicate failed");
+    }
+  };
+
   // Pagination calculations
   const totalPages = Math.ceil(products.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
@@ -186,11 +247,16 @@ export default function ManageProductsPage() {
                       </Link>
                       <button
                         onClick={() => handleDelete(p._id)}
-                        className="btn btn-sm btn-danger"
+                        className="btn btn-sm btn-danger me-2"
                       >
                         Delete
                       </button>
-
+                      <button
+                        onClick={() => handleDuplicate(p)}
+                        className="btn btn-sm btn-secondary"
+                      >
+                        Duplicate
+                      </button>
                     </td>
 
                   </tr>
